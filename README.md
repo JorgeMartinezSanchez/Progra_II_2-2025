@@ -61,10 +61,10 @@ Marca los que planeas usar:
 
 | Nº | Nombre de la funcionalidad | Descripción breve | Estado actual |
 |----|----------------------------|-------------------|----------------|
-| 1 | Registro y autenticación de usuarios | Permitir que los usuarios se registren e inicien sesión | ☐ Planeada ☐ En desarrollo |
-| 2 | Personalización de platos | Interfaz para seleccionar ingredientes por categoría | ☐ Planeada ☐ En desarrollo |
-| 3 | Proceso de checkout | Finalizar pedido y generar factura | ☐ Planeada ☐ En desarrollo |
-| 4 | Gestión de inventario | Administrar disponibilidad de ingredientes | ☐ Planeada ☐ En desarrollo |
+| 1 | Registro y autenticación de usuarios | Permitir que los usuarios se registren e inicien sesión | ✅ Planeada ☐ En desarrollo |
+| 2 | Personalización de platos | Interfaz para seleccionar ingredientes por categoría | ✅ Planeada ☐ En desarrollo |
+| 3 | Proceso de checkout | Finalizar pedido y generar factura | ✅ Planeada ☐ En desarrollo |
+| 4 | Gestión de inventario | Administrar disponibilidad de ingredientes | ✅ Planeada ☐ En desarrollo |
 
 > *(Agrega más filas si lo necesitas.)*
 
