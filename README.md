@@ -46,7 +46,7 @@ Marca los que planeas usar:
 
 ### Clases estimadas
 - **Cantidad inicial de clases:** *8-10*  
-- **Ejemplo de posibles clases:** *(Usuario, Ingrediente, PlatoPersonalizado, Pedido, CategoriaIngrediente, CarritoCompra, Factura, BaseDatos)*
+- **Ejemplo de posibles clases:** *(Usuario, Ingrediente, PlatoPersonalizado, Pedido, CategoriaIngrediente, Factura, etc.)*
 
 
 ### Persistencia de datos
