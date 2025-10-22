@@ -1,4 +1,4 @@
-# Propuesta Inicial de Proyecto – Chat Cifrado
+# Propuesta Inicial de Proyecto – Ordenar Comida de forma personalizada
 
 **Carrera:** Ingeniería de Software  
 **Materia:** Programación II
@@ -12,7 +12,7 @@
 
 | Campo | Descripción |
 |--------|-------------|
-| **Nombre del proyecto:** | *SafeChat* |
+| **Nombre del proyecto:** | *Tweezers* |
 | **Tipo de aplicación:** | ✅ Web |
 | **Lenguaje / entorno de desarrollo:** | C# Web API con Angular |
 | **Repositorio Git (URL):** | *https://github.com/JorgeMartinezSanchez/Progra_II_2-2025* |
@@ -25,12 +25,12 @@
 
 ## 2. Descripción del Proyecto
 
-SafeChat es una aplicacion de chat local cifrado en el que puedes interactuar con personas de forma segura con contactos registrados por ti mismo sin uso de SMS o de tu número de teléfono.
+Tweezers es un restaurente en donde por medio de su sitio web puedes tener tu almuerzo personalizado o guarniciones en un solo plato. Los usuarios podrán seleccionar entre diferentes bases, proteínas, vegetales, salsas y acompañamientos para crear su plato ideal según sus preferencias dietéticas y gustos personales.
 
 ### Objetivos principales
-1.  Tener mensajes cifrados para que nadie más que el usuario lo pueda leer.
-2.  Tener un sistema de bloqueo si el chat se deja inactivo por 1 minuto.
-3.  Uso de los cifradores RSA y AES.
+1.  *Permitir a los usuarios personalizar completamente su plato eligiendo entre múltiples ingredientes y categorías*
+2.  *Gestionar eficientemente el inventario de ingredientes y la preparación de pedidos*
+3.  *Proporcionar una experiencia de usuario intuitiva para realizar pedidos personalizados*
 
 ---
 
@@ -45,8 +45,8 @@ Marca los que planeas usar:
 - [x] Interfaces o clases abstractas
 
 ### Clases estimadas
-- **Cantidad inicial de clases:** _____  
-- **Ejemplo de posibles clases:** *(Usuario, Producto, Pedido, etc.)*
+- **Cantidad inicial de clases:** *8-10*  
+- **Ejemplo de posibles clases:** *(Usuario, Ingrediente, PlatoPersonalizado, Pedido, CategoriaIngrediente, CarritoCompra, Factura, BaseDatos)*
 
 
 ### Persistencia de datos
@@ -60,10 +60,11 @@ Marca los que planeas usar:
 ## 4. Funcionalidades Principales
 
 | Nº | Nombre de la funcionalidad | Descripción breve | Estado actual |
-|----|-----------------------------|-------------------|----------------|
-| 1 | Contactos con id unico | Sirven para poder manejar mejor los usuarios y evitando con | ☐ Planeada ☐ En desarrollo |
-| 2 | | | ☐ Planeada ☐ En desarrollo |
-| 3 | | | ☐ Planeada ☐ En desarrollo |
+|----|----------------------------|-------------------|----------------|
+| 1 | Registro y autenticación de usuarios | Permitir que los usuarios se registren e inicien sesión | ☐ Planeada ☐ En desarrollo |
+| 2 | Personalización de platos | Interfaz para seleccionar ingredientes por categoría | ☐ Planeada ☐ En desarrollo |
+| 3 | Proceso de checkout | Finalizar pedido y generar factura | ☐ Planeada ☐ En desarrollo |
+| 4 | Gestión de inventario | Administrar disponibilidad de ingredientes | ☐ Planeada ☐ En desarrollo |
 
 > *(Agrega más filas si lo necesitas.)*
 
@@ -77,6 +78,6 @@ Declaro que:
 - Defenderé el código que yo mismo implementé y explicaré las clases y métodos principales.
 - Si usé herramientas de IA, comprendo su funcionamiento y las adapté al contexto del proyecto.
 
-**Firma (nombre completo):** __________________________  
+**Firma (nombre completo):** *Jorge Martínez Sánchez* 
 
 ---
