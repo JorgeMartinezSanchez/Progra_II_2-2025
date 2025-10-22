@@ -1,4 +1,4 @@
-# Propuesta Inicial de Proyecto – Ordenar Comida de forma personalizada
+# Propuesta Inicial de Proyecto – Chat cifrado
 
 **Carrera:** Ingeniería de Software  
 **Materia:** Programación II
@@ -12,7 +12,7 @@
 
 | Campo | Descripción |
 |--------|-------------|
-| **Nombre del proyecto:** | *Tweezers* |
+| **Nombre del proyecto:** | *SafeChat* |
 | **Tipo de aplicación:** | ✅ Web |
 | **Lenguaje / entorno de desarrollo:** | C# Web API con Angular |
 | **Repositorio Git (URL):** | *https://github.com/JorgeMartinezSanchez/Progra_II_2-2025* |
@@ -25,7 +25,7 @@
 
 ## 2. Descripción del Proyecto
 
-Tweezers es un restaurente en donde por medio de su sitio web puedes tener tu almuerzo personalizado o guarniciones en un solo plato. Los usuarios podrán seleccionar entre diferentes bases, proteínas, vegetales, salsas y acompañamientos para crear su plato ideal según sus preferencias dietéticas y gustos personales.
+
 
 ### Objetivos principales
 1.  *Permitir a los usuarios personalizar completamente su plato eligiendo entre múltiples ingredientes y categorías*
