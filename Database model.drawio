@@ -80,7 +80,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="M9xFm2BTPpTuVcBSHMio-17" value="Message" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="90" y="830" width="210" height="180" as="geometry" />
+          <mxGeometry x="70" y="640" width="210" height="180" as="geometry" />
         </mxCell>
         <mxCell id="M9xFm2BTPpTuVcBSHMio-18" value="_Id: ObjectId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="M9xFm2BTPpTuVcBSHMio-17">
           <mxGeometry y="30" width="210" height="30" as="geometry" />
@@ -100,7 +100,7 @@
         <mxCell id="M9xFm2BTPpTuVcBSHMio-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="M9xFm2BTPpTuVcBSHMio-19" target="RSzfzLu9Q68YBZgzh1_k-10">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="320" y="905" />
+              <mxPoint x="320" y="715" />
               <mxPoint x="320" y="610" />
               <mxPoint x="490" y="610" />
               <mxPoint x="490" y="365" />
