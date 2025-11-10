@@ -50,22 +50,19 @@
           <mxGeometry y="180" width="220" height="30" as="geometry" />
         </mxCell>
         <mxCell id="M9xFm2BTPpTuVcBSHMio-6" value="Message" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="537" y="770" width="290" height="180" as="geometry" />
+          <mxGeometry x="530" y="770" width="293" height="150" as="geometry" />
         </mxCell>
         <mxCell id="M9xFm2BTPpTuVcBSHMio-7" value="Id: ObjectId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="M9xFm2BTPpTuVcBSHMio-6" vertex="1">
-          <mxGeometry y="30" width="290" height="30" as="geometry" />
+          <mxGeometry y="30" width="293" height="30" as="geometry" />
         </mxCell>
         <mxCell id="M9xFm2BTPpTuVcBSHMio-9" value="senderId: ObjectId (ref: Account)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="M9xFm2BTPpTuVcBSHMio-6" vertex="1">
-          <mxGeometry y="60" width="290" height="30" as="geometry" />
+          <mxGeometry y="60" width="293" height="30" as="geometry" />
         </mxCell>
         <mxCell id="M9xFm2BTPpTuVcBSHMio-10" value="encryptedContent: string (mensaje cifrado con AES)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="M9xFm2BTPpTuVcBSHMio-6" vertex="1">
-          <mxGeometry y="90" width="290" height="30" as="geometry" />
+          <mxGeometry y="90" width="293" height="30" as="geometry" />
         </mxCell>
         <mxCell id="M9xFm2BTPpTuVcBSHMio-11" value="createdAt: datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="M9xFm2BTPpTuVcBSHMio-6" vertex="1">
-          <mxGeometry y="120" width="290" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="M9xFm2BTPpTuVcBSHMio-12" value="lastActivity: ObjectId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="M9xFm2BTPpTuVcBSHMio-6" vertex="1">
-          <mxGeometry y="150" width="290" height="30" as="geometry" />
+          <mxGeometry y="120" width="293" height="30" as="geometry" />
         </mxCell>
         <mxCell id="M9xFm2BTPpTuVcBSHMio-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" parent="1" source="r_acuL0D2wiZWsoIFe6g-2" target="RSzfzLu9Q68YBZgzh1_k-2" edge="1">
           <mxGeometry relative="1" as="geometry" />
