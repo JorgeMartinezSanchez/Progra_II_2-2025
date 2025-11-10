@@ -123,6 +123,24 @@
             </Array>
           </mxGeometry>
         </mxCell>
+        <mxCell id="s0QLoy7miXwJbmLtN6Sc-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="RSzfzLu9Q68YBZgzh1_k-10" target="s0QLoy7miXwJbmLtN6Sc-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="465" />
+              <mxPoint x="500" y="845" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s0QLoy7miXwJbmLtN6Sc-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="RSzfzLu9Q68YBZgzh1_k-10" target="M9xFm2BTPpTuVcBSHMio-20">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="465" />
+              <mxPoint x="230" y="655" />
+              <mxPoint x="309" y="655" />
+              <mxPoint x="309" y="845" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
