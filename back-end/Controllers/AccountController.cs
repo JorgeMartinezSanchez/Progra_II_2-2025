@@ -1,0 +1,87 @@
+// Controllers/AccountController.cs
+using Microsoft.AspNetCore.Mvc;
+using back_end.Interfaces;
+using back_end.DTOs;
+
+namespace back_end.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
+    {
+        private readonly IAccountService _accountService;
+
+        public AccountController(IAccountService accountService)
+        {
+            _accountService = accountService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAccounts()
+        {
+            try
+            {
+                var accounts = await _accountService.GetAllAccountsAsync();
+                return Ok(accounts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Internal server error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAccountById(string id)
+        {
+            try
+            {
+                var account = await _accountService.GetAccountByIdAsync(id);
+                return Ok(account);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Internal server error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto createAccountDto)
+        {
+            try
+            {
+                var account = await _accountService.CreateAccountAsync(createAccountDto);
+                return CreatedAtAction(nameof(GetAccountById), new { id = account.Id }, account);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Internal server error: {ex.Message}" });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAccount(string id)
+        {
+            try
+            {
+                await _accountService.DeleteAccountAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Internal server error: {ex.Message}" });
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+<!-- login.component.html -->
+<div class="login-page">
+    <div class="login-div">
+        <h1>Welcome to SafeChat</h1>
+        
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+            <h5>Username</h5>
+            <input 
+                type="text" 
+                name="username" 
+                [(ngModel)]="credentials.username" 
+                required>
+            
+            <h5>Password</h5>
+            <input 
+                type="password" 
+                name="password" 
+                [(ngModel)]="credentials.password"  
+                required>
+            
+            <div class="login-buttons-container">
+                <button type="submit" class="login-button" [disabled]="isLoading">
+                    <span *ngIf="!isLoading">Log In</span>
+                    <span *ngIf="isLoading" class="loading-text">Signing in...</span>
+                </button>
+                <button type="button" class="signup-button" (click)="signUp()">
+                    Sign Up
+                </button>
+            </div>
+        </form>
+
+        <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="signin-page">
+    <div class="main-signin-div">
+        <h1>Create Account</h1>
+        
+        <!-- Mostrar la imagen seleccionada o placeholder -->
+        <div class="profile-picture" (click)="editPfp = true">
+            <img *ngIf="selectedProfilePic" [src]="selectedProfilePic" class="selected-profile-img">
+            <span *ngIf="!selectedProfilePic">Click to choose profile picture</span>
+        </div>
+
+        <div class="username-password-input">
+            <p>Username</p>
+            <input [(ngModel)]="username" placeholder="Enter your username">
+            <p>Password</p>
+            <input type="password" [(ngModel)]="password" placeholder="Enter your password">
+        </div>
+
+        <button class="confirm-sign-in" (click)="createAccount()">Create Account</button>
+    </div>
+
+    @if(editPfp){
+        <div class="edit-profile-picture-div">
+            <div class="edit-profile-content">
+                <h2>Choose Profile Picture</h2>
+                
+                <div class="profile-pictures-grid">
+                    <img 
+                        *ngFor="let pic of profilePictures; let i = index" 
+                        [src]="pic" 
+                        class="profile-picture-option"
+                        [class.selected]="selectedProfilePic === pic"
+                        (click)="selectProfilePicture(pic)"
+                        [alt]="'Profile picture option ' + (i + 1)"
+                        (error)="handleImageError($event)">
+                </div>
+
+                <button class="random-button" (click)="selectRandomPicture()">
+                    🎲 Choose Random
+                </button>
+
+                <div class="edit-profile-buttons">
+                    <button class="edit-profile-button confirm" (click)="confirmProfilePicture()">
+                        Confirm
+                    </button>
+                    <button class="edit-profile-button cancel" (click)="editPfp = false">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

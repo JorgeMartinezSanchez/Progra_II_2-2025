@@ -1,0 +1,73 @@
+<!-- chat.component.html -->
+<div class="chat-component">
+    @if(currentChat) {
+        <!-- Header del chat -->
+        <div class="chat-header">
+            <button class="back-button" (click)="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="chat-avatar">
+                {{ currentChat.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="chat-info">
+                <h2 class="chat-title">{{ currentChat.name }}</h2>
+                <p class="chat-status">
+                    @if(currentChat.isEncrypted) {
+                        <i class="fas fa-lock"></i> Chat encriptado
+                    } @else {
+                        <i class="fas fa-unlock"></i> Chat no encriptado
+                    }
+                    @if(isGroupChat(currentChat)) {
+                        • <i class="fas fa-users"></i> {{ currentChat.members.length }} miembros
+                    }
+                </p>
+            </div>
+        </div>
+
+        <!-- Área de mensajes -->
+        <div class="messages-container">
+            @for(message of currentChat.messages; track message.sendDate) {
+                <div class="message" [class.own-message]="message.userId === 1">
+                    
+                    <!-- Mostrar nombre del remitente solo en grupos -->
+                    @if(isGroupChat(currentChat) && message.userId !== 1) {
+                        <div class="sender-name">
+                            {{ getSenderName(message, currentChat) }}
+                        </div>
+                    }
+                    
+                    <div class="message-content">
+                        <p>{{ message.message }}</p>
+                        <span class="message-time">
+                            {{ message.sendDate | date:'HH:mm' }}
+                        </span>
+                    </div>
+                </div>
+            } @empty {
+                <div class="empty-messages">
+                    <p>No hay mensajes aún. ¡Envía el primero!</p>
+                </div>
+            }
+        </div>
+
+        <!-- Input para enviar mensajes -->
+        <div class="message-input-container">
+            <input 
+                #messageInput
+                type="text" 
+                placeholder="Escribe un mensaje..." 
+                class="message-input"
+                (keyup.enter)="sendMessage(messageInput.value); messageInput.value = ''">
+            <button class="send-button" (click)="sendMessage(messageInput.value); messageInput.value = ''">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    } @else {
+        <!-- Estado cuando no hay chat seleccionado -->
+        <div class="no-chat-selected">
+            <i class="fas fa-comments"></i>
+            <h3>Selecciona un chat</h3>
+            <p>Elige una conversación de la lista para empezar a chatear</p>
+        </div>
+    }
+</div>
