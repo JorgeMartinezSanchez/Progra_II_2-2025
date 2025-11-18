@@ -19,5 +19,4 @@ namespace back_end.DTOs
         [Required]
         public string EncryptedAesKey { get; set; } = string.Empty; // Clave AES RSA-cifrada
     }
-    }
 }
