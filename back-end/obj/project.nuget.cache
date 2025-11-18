@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Yk5MSj8Yy/U=",
+  "dgSpecHash": "kUpS1lkU4w4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\JORGE MARTINEZ S\\Desktop\\UCB\\2-2025\\Programacion II\\proyecto\\SafeChat\\back-end\\back-end.csproj",
+  "projectFilePath": "C:\\Users\\JORGE MARTINEZ S\\Progra_II_2-2025\\back-end\\back-end.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\JORGE MARTINEZ S\\.nuget\\packages\\automapper\\15.1.0\\automapper.15.1.0.nupkg.sha512",
     "C:\\Users\\JORGE MARTINEZ S\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
@@ -39,10 +39,10 @@
     {
       "code": "NU1608",
       "level": "Warning",
-      "message": "Se detectó una versión del paquete fuera de la restricción de dependencia: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requiere AutoMapper (= 12.0.1), pero la versión AutoMapper 15.1.0 ya se resolvió.",
-      "projectPath": "C:\\Users\\JORGE MARTINEZ S\\Desktop\\UCB\\2-2025\\Programacion II\\proyecto\\SafeChat\\back-end\\back-end.csproj",
+      "message": "Detected package version outside of dependency constraint: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requires AutoMapper (= 12.0.1) but version AutoMapper 15.1.0 was resolved.",
+      "projectPath": "C:\\Users\\JORGE MARTINEZ S\\Progra_II_2-2025\\back-end\\back-end.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\JORGE MARTINEZ S\\Desktop\\UCB\\2-2025\\Programacion II\\proyecto\\SafeChat\\back-end\\back-end.csproj",
+      "filePath": "C:\\Users\\JORGE MARTINEZ S\\Progra_II_2-2025\\back-end\\back-end.csproj",
       "libraryId": "AutoMapper",
       "targetGraphs": [
         "net9.0"

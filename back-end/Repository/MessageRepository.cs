@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace back_end.Repository
 {
-    public class MessageRepository /*: IMessageReposiroty*/
+    public class MessageRepository : IMessageReposiroty
     {
         private readonly IMongoCollection<Message> _messages;
 
@@ -29,6 +29,17 @@ namespace back_end.Repository
         public async Task DeleteAsync(string id)
         {
             await _messages.DeleteOneAsync(a => a.Id == id);
+        }
+        public async Task<Message> GetByIdAsync(string id)
+        {
+            return await _messages.Find(m => m.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Message>> GetByChatIdAsync(string chatId)
+        {
+            return await _messages.Find(m => m.ChatId == chatId)
+                                .SortBy(m => m.TimeStamp)
+                                .ToListAsync();
         }
     }
 }
