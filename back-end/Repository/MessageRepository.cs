@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace back_end.Repository
 {
-    public class MessageRepository : IMessageReposiroty
+    public class MessageRepository : IMessageRepository
     {
         private readonly IMongoCollection<Message> _messages;
 
@@ -22,13 +22,20 @@ namespace back_end.Repository
             await _messages.InsertOneAsync(message);
             return message;
         }
-        public async Task UpdateAsync(string id, Message message)
+        public async Task UpdateAsync(string messageId, Message message)
         {
-            await _messages.ReplaceOneAsync(a => a.Id == id, message);
+            await _messages.ReplaceOneAsync(a => a.Id == messageId, message);
         }
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(Message message)
         {
-            await _messages.DeleteOneAsync(a => a.Id == id);
+            await _messages.DeleteOneAsync(a => a.Id == message.Id);
+        }
+        public async Task _DeleteManyAsync(List<Message> messages)
+        {
+            var messageIds = messages.Select(m => m.Id).ToList();
+            
+            var filter = Builders<Message>.Filter.In(m => m.Id, messageIds);
+            await _messages.DeleteManyAsync(filter);
         }
         public async Task<Message> GetByIdAsync(string id)
         {

@@ -12,6 +12,9 @@ namespace back_end.DTOs
         public string SenderId { get; set; } = string.Empty;
 
         [Required]
-        public string Content { get; set; } = string.Empty; 
+        public string EncryptedContent { get; set; } = string.Empty;
+        
+        [Required]
+        public string Iv { get; set; } = string.Empty;
     }
 }

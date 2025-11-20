@@ -34,7 +34,6 @@ namespace back_end.Services
         }
         public async Task<AccountResponseDto> CreateAccountAsync(CreateAccountDto createAccountDto)
         {
-            // ✅ SIMPLIFICADO - Sin generación de userId
             var existingAccount = await _accountRepository.GetByUsernameAsync(createAccountDto.Username);
             if (existingAccount != null)
                 throw new InvalidOperationException("Username already exists");

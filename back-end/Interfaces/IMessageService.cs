@@ -9,11 +9,11 @@ namespace back_end.Interfaces
 {
     public interface IMessageService
     {
-        Task<ReceiveUnencryptedMessageDto> UnencrypteMessage(ReceiveMessageDto encryptedMessage);
         Task<ReceiveMessageDto> SendMessageAsync(CreateMessageDto messageDto);
         Task<List<ReceiveMessageDto>> GetMessagesByPrivateChatAsync(string privateChatId);
-        Task DeleteMessageAsync(string messageId);
-        Task UpdateMessageStatusAsync(string messageId, string status);
-        Task<ReceiveMessageDto> MapToDto(Message message);
+        Task MarkAsSeen(string privateChatId);
+        Task DeleteMessageAsync(ReceiveMessageDto message);
+        Task DeleteManyMessagesAsync(List<ReceiveMessageDto> messages);
+        ReceiveMessageDto MapToDto(Message message);
     }
 }
