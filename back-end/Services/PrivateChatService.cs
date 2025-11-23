@@ -1,18 +1,30 @@
 using back_end.DTOs;
 using back_end.Interfaces;
 using back_end.Models;
-using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace back_end.Services
 {
-    public class PrivateChatService : IPrivateChatService{
+    public class PrivateChatService : IPrivateChatService
+    {
         private readonly IPrivateChatRepository _privateChatRepository;
-        private readonly IAccountService _accountService; // servicio de account
+        private readonly IChatKeyStoreRepository _chatKeyStoreRepository;
+        private readonly IAccountService _accountService;
+        private readonly IMessageService _messageService;
 
-        public PrivateChatService(IPrivateChatRepository privateChatRepository, IAccountService accountService)
+        public PrivateChatService(
+            IPrivateChatRepository privateChatRepository, 
+            IChatKeyStoreRepository chatKeyStoreRepository,
+            IAccountService accountService,
+            IMessageService messageService)
         {
             _privateChatRepository = privateChatRepository;
+            _chatKeyStoreRepository = chatKeyStoreRepository;
             _accountService = accountService;
+            _messageService = messageService;
         }
         
         public async Task<bool> AlreadyAddedContactAsync(string id, string SendingUsername)
@@ -38,8 +50,11 @@ namespace back_end.Services
 
         public async Task<ReceivePrivateChatDto> CreatePrivateChatAsync(CreatePrivateChatDto newPrivateChatParam)
         {
-            // Validación adicional
-            if (string.IsNullOrWhiteSpace(newPrivateChatParam.EncryptedChatKey)) throw new ArgumentException("Encrypted chat key is required");
+            if (string.IsNullOrWhiteSpace(newPrivateChatParam.EncryptedChatKeyForMe)) 
+                throw new ArgumentException("Encrypted chat key for me is required");
+
+            if (string.IsNullOrWhiteSpace(newPrivateChatParam.EncryptedChatKeyForThem)) 
+                throw new ArgumentException("Encrypted chat key for them is required");
 
             if (!await AlreadyAddedContactAsync(newPrivateChatParam.AccountId, newPrivateChatParam.SendingUsername))
             {
@@ -48,7 +63,6 @@ namespace back_end.Services
                 
                 if (targetAccount == null) throw new KeyNotFoundException("User doesn't exist.");
 
-                // Determinar quién es account1 y account2 de manera consistente
                 string account1Id, account2Id;
                 if (string.Compare(newPrivateChatParam.AccountId, targetAccount.Id) < 0)
                 {
@@ -65,15 +79,30 @@ namespace back_end.Services
                 {
                     Account1Id = account1Id,
                     Account2Id = account2Id,
-                    ChatKey = newPrivateChatParam.EncryptedChatKey, // Clave cifrada
                     CreatedAt = DateTime.UtcNow,
                     LastActivity = DateTime.UtcNow
                 };
 
-                // Guardar en base de datos
                 var createdChat = await _privateChatRepository.CreateAsync(newPrivateChat);
                 
-                // Mapear a DTO con información enriquecida - pasar el ID del usuario actual
+                // Guardar clave para el usuario actual
+                await _chatKeyStoreRepository.CreateAsync(new ChatKeyStore
+                {
+                    AccountId = newPrivateChatParam.AccountId,
+                    ChatId = createdChat.Id,
+                    EncryptedChatKey = newPrivateChatParam.EncryptedChatKeyForMe,
+                    CreatedAt = DateTime.UtcNow
+                });
+                
+                // Guardar clave para el otro usuario
+                await _chatKeyStoreRepository.CreateAsync(new ChatKeyStore
+                {
+                    AccountId = targetAccount.Id,
+                    ChatId = createdChat.Id,
+                    EncryptedChatKey = newPrivateChatParam.EncryptedChatKeyForThem,
+                    CreatedAt = DateTime.UtcNow
+                });
+                
                 return await MapToDto(createdChat, newPrivateChatParam.AccountId);
             }
             else
@@ -81,35 +110,80 @@ namespace back_end.Services
                 throw new InvalidOperationException("Chat already exists with this user.");
             }
         }
-        public async Task DeleteChatAsync(string _id)
+
+        public async Task DeleteChatAsync(string chatId)
         {
-            await _privateChatRepository.DeleteAsync(_id);
+            List<ReceiveMessageDto> messages = await _messageService.GetMessagesByPrivateChatAsync(chatId);
+            await _messageService.DeleteManyMessagesAsync(messages);
+            await _chatKeyStoreRepository.DeleteByChatIdAsync(chatId);
+            await _privateChatRepository.DeleteAsync(chatId);
         }
-        public async Task<List<ReceivePrivateChatDto>> LoadChats(string _id)
+        public async Task<List<ReceivePrivateChatDto>> LoadChats(string accountId)
         {
+            // ✅ Obtener todos los ChatKeyStore del usuario (1 query)
+            var userChatKeys = await _chatKeyStoreRepository.GetAllByUserIdAsync(accountId);
+            
             List<ReceivePrivateChatDto> allChats = new List<ReceivePrivateChatDto>();
-            var AllContacts = await _privateChatRepository.GetAllByAccountId(_id);
-            foreach(var Contact in AllContacts)
+            
+            foreach(var chatKey in userChatKeys)
             {
-                allChats.Add(await MapToDto(Contact, _id));
+                var chat = await _privateChatRepository.GetByIdAsync(chatKey.ChatId);
+                
+                if (chat == null) continue;
+
+                string contactId = chat.Account1Id == accountId ? chat.Account2Id : chat.Account1Id;
+
+                var contactAccount = await _accountService.GetAccountByIdAsync(contactId);
+                
+                allChats.Add(new ReceivePrivateChatDto
+                {
+                    Id = chat.Id,
+                    Account1Id = chat.Account1Id,
+                    Account2Id = chat.Account2Id,
+                    CreatedAt = chat.CreatedAt,
+                    LastActivity = chat.LastActivity,
+                    ContactId = contactAccount.Id,
+                    ContactUsername = contactAccount.Username,
+                    ContactBase64Pfp = contactAccount.Base64Pfp
+                });
             }
+            
             return allChats;
         }
+
         public async Task<ReceivePrivateChatDto> MapToDto(PrivateChat privateChat, string currentUserId)
         {
-            // Determinar cuál es el ID del contacto (el que NO es el usuario actual)
             string contactId = privateChat.Account1Id == currentUserId ? privateChat.Account2Id : privateChat.Account1Id;
-            
-            // Obtener la información del contacto
             var contactAccount = await _accountService.GetAccountByIdAsync(contactId);
             
             return new ReceivePrivateChatDto
             {
-                ReceiverAccountUsername = contactAccount.Username,
-                ChatKey = privateChat.ChatKey,
+                Id = privateChat.Id,
+                Account1Id = privateChat.Account1Id,
+                Account2Id = privateChat.Account2Id,
+                CreatedAt = privateChat.CreatedAt,
+                LastActivity = privateChat.LastActivity,
+                ContactId = contactAccount.Id,
+                ContactUsername = contactAccount.Username,
+                ContactBase64Pfp = contactAccount.Base64Pfp
+            };
+        }
+
+        private ReceivePrivateChatDto MapToDto(PrivateChat privateChat)
+        {            
+            return new ReceivePrivateChatDto
+            {
+                Id = privateChat.Id,
+                Account1Id = privateChat.Account1Id,
+                Account2Id = privateChat.Account2Id,
                 CreatedAt = privateChat.CreatedAt,
                 LastActivity = privateChat.LastActivity
             };
+        }
+
+        public async Task<ReceivePrivateChatDto> GetPrivateChatById(string id)
+        {
+            return MapToDto(await _privateChatRepository.GetByIdAsync(id));
         }
     }
 }

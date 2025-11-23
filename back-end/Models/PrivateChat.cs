@@ -17,9 +17,6 @@ namespace back_end.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Account2Id { get; set; } = string.Empty;
 
-        [BsonElement("chatKey")]
-        public string ChatKey { get; set; } = string.Empty;
-
         [BsonElement("createdAt")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

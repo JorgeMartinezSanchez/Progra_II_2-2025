@@ -8,19 +8,14 @@ namespace back_end.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = string.Empty;
-
         [BsonElement("accountId")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string UserId { get; set; } = string.Empty;
-
+        public string AccountId { get; set; } = string.Empty;
         [BsonElement("chatId")]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string ChatId { get; set; } = string.Empty;
-
         [BsonElement("encryptedChatKey")]
+        // Clave AES del chat, cifrada con la clave pública RSA de este usuario
         public string EncryptedChatKey { get; set; } = string.Empty;
-
         [BsonElement("createdAt")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
     }
 }

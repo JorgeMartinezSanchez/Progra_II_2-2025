@@ -21,6 +21,7 @@ namespace back_end.Services
         {
             return new ReceiveMessageDto
             {
+              Id = message.Id,
               ChatId = message.ChatId,
               SenderId = message.SenderId,
               EncryptedContent = message.EncryptedContent,
@@ -28,6 +29,14 @@ namespace back_end.Services
               TimeStamp = message.TimeStamp,
               Status = message.Status
             };
+        }
+        public async Task<ReceiveMessageDto> GetMessageById(string id)
+        {
+            var message = await _messageReposiroty.GetByIdAsync(id);
+            if (message == null)
+                throw new KeyNotFoundException($"Account with ID {id} not found");
+
+            return MapToDto(message);
         }
         public async Task<ReceiveMessageDto> SendMessageAsync(CreateMessageDto messageDto)
         {
@@ -81,11 +90,34 @@ namespace back_end.Services
         }
         public async Task DeleteMessageAsync(ReceiveMessageDto message)
         {
-            
+            await _messageReposiroty.DeleteAsync(new Message
+            {
+                Id = message.Id,
+                ChatId = message.ChatId,
+                SenderId = message.SenderId,
+                EncryptedContent = message.EncryptedContent,
+                Iv = message.Iv,
+                TimeStamp = message.TimeStamp,
+                Status = message.Status
+            });
         }
         public async Task DeleteManyMessagesAsync(List<ReceiveMessageDto> messages)
         {
-            
+            List<Message> DtoToMapMessages = new List<Message>();
+            foreach(ReceiveMessageDto message in messages)
+            {
+                DtoToMapMessages.Add(new Message
+                {
+                    Id = message.Id,
+                    ChatId = message.ChatId,
+                    SenderId = message.SenderId,
+                    EncryptedContent = message.EncryptedContent,
+                    Iv = message.Iv,
+                    TimeStamp = message.TimeStamp,
+                    Status = message.Status
+                });
+            }
+            await _messageReposiroty._DeleteManyAsync(DtoToMapMessages);
         }
     }
 }

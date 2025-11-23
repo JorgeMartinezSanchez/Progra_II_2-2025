@@ -7,15 +7,28 @@ using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar MongoDB
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
-// Registrar MongoDB como servicio
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
 {
     var settings = builder.Configuration.GetSection("MongoDB").Get<MongoDBSettings>();
+    if (settings == null || string.IsNullOrEmpty(settings.ConnectionString))
+    {
+        throw new InvalidOperationException("MongoDB configuration is missing or invalid");
+    }
     return new MongoClient(settings.ConnectionString);
+});
+
+builder.Services.AddScoped<IMongoDatabase>(serviceProvider =>
+{
+    var settings = builder.Configuration.GetSection("MongoDB").Get<MongoDBSettings>();
+    if (settings == null || string.IsNullOrEmpty(settings.DatabaseName))
+    {
+        throw new InvalidOperationException("MongoDB database name is missing");
+    }
+    var client = serviceProvider.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(settings.DatabaseName);
 });
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -23,8 +36,14 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
-/*builder.Services.AddScoped<IMessageReposiroty, MessageRepository>();
-builder.Services.AddScoped<IMessageService, MessageService>();*/
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+
+builder.Services.AddScoped<IPrivateChatRepository, PrivateChatRepository>();
+builder.Services.AddScoped<IPrivateChatService, PrivateChatService>();
+
+builder.Services.AddScoped<IChatKeyStoreRepository, ChatKeyStoreRepository>();
+builder.Services.AddScoped<IChatKeyStoreService, ChatKeyStoreService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

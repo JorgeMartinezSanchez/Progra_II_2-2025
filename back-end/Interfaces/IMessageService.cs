@@ -11,6 +11,7 @@ namespace back_end.Interfaces
     {
         Task<ReceiveMessageDto> SendMessageAsync(CreateMessageDto messageDto);
         Task<List<ReceiveMessageDto>> GetMessagesByPrivateChatAsync(string privateChatId);
+        Task<ReceiveMessageDto> GetMessageById(string id);
         Task MarkAsSeen(string privateChatId);
         Task DeleteMessageAsync(ReceiveMessageDto message);
         Task DeleteManyMessagesAsync(List<ReceiveMessageDto> messages);

@@ -10,17 +10,22 @@ namespace back_end.DTOs
     {
         [Required]
         public string Id { get; set; } = string.Empty;
+        
         [Required]
-        public string ChatId { get; set; } = string.Empty;
+        public string Account1Id { get; set; } = string.Empty;
+        
         [Required]
-        public string SenderId { get; set; } = string.Empty;
+        public string Account2Id { get; set; } = string.Empty;
+        
         [Required]
-        public string EncryptedContent { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
         [Required]
-        public string Iv { get; set; } = string.Empty;
-        [Required]
-        public DateTime TimeStamp { get; set; } = DateTime.UtcNow;
-        [Required]
-        public string Status { get; set; } = string.Empty;
+        public DateTime LastActivity { get; set; } = DateTime.UtcNow;
+        
+        // Información del contacto (opcional, útil para UI)
+        public string? ContactId { get; set; }
+        public string? ContactUsername { get; set; }
+        public string? ContactBase64Pfp { get; set; }
     }
 }
