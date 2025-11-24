@@ -13,12 +13,6 @@ namespace back_end.Repository
         public AccountRepository(IMongoDatabase database)
         {
             _accounts = database.GetCollection<Account>("Account");
-            
-            // Crear índice único para username
-            var indexKeysDefinition = Builders<Account>.IndexKeys.Ascending(a => a.Username);
-            var indexOptions = new CreateIndexOptions { Unique = true };
-            var indexModel = new CreateIndexModel<Account>(indexKeysDefinition, indexOptions);
-            _accounts.Indexes.CreateOne(indexModel);
         }
 
         public async Task<List<Account>> GetAllAsync()
