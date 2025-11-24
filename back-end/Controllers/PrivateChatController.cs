@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using back_end.DTOs;
 using back_end.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using ZstdSharp.Unsafe;
 
 namespace back_end.Controllers
 {

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RsaDecoderService } from './rsa-decoder.service';
+import { StateService } from './state.service';
 
-describe('RsaDecoderService', () => {
-  let service: RsaDecoderService;
+describe('StateService', () => {
+  let service: StateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(RsaDecoderService);
+    service = TestBed.inject(StateService);
   });
 
   it('should be created', () => {

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { Account } from '../interfaces/account';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import { RecieveAccount } from '../interfaces/receiveAccount';
 
 @Component({
   selector: 'app-user-config',
@@ -10,8 +10,8 @@ import { AuthService } from '../../services/auth/auth.service';
   styleUrl: './user-config.component.css'
 })
 export class UserConfigComponent {
-  @Input() hostUser: Account | null = null;
-  @Output() chatOutput = new EventEmitter<Account>();
+  @Input() hostUser: RecieveAccount | null = null;
+  @Output() chatOutput = new EventEmitter<RecieveAccount>();
   private router = inject(Router);
   private authService = inject(AuthService); // Inyectar el servicio
   public popOutWarning: boolean = false;

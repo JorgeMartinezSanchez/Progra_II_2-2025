@@ -1,4 +1,3 @@
-// DTOs/CreateAccountDto.cs
 using System.ComponentModel.DataAnnotations;
 
 namespace back_end.DTOs

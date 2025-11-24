@@ -1,4 +1,3 @@
-// Controllers/AccountController.cs
 using Microsoft.AspNetCore.Mvc;
 using back_end.Interfaces;
 using back_end.DTOs;
@@ -52,7 +51,7 @@ namespace back_end.Controllers
         {
             try
             {
-                var account = await _accountService.CreateAccountAsync(createAccountDto);
+                ReceiveAccountDto account = await _accountService.CreateAccountAsync(createAccountDto);
                 return CreatedAtAction(nameof(GetAccountById), new { id = account.Id }, account);
             }
             catch (InvalidOperationException ex)
@@ -66,11 +65,11 @@ namespace back_end.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAccount(string id)
+        public async Task<IActionResult> DeleteAccount(ReceiveAccountDto account)
         {
             try
             {
-                await _accountService.DeleteAccountAsync(id);
+                await _accountService.DeleteAccountAsync(account.Id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)

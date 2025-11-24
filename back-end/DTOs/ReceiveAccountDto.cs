@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-// DTOs/AccountResponseDto.cs
 namespace back_end.DTOs
 {
-    public class AccountResponseDto
+    public class ReceiveAccountDto
     {
         public string Id { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;

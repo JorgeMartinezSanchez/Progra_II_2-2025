@@ -18,13 +18,13 @@ namespace back_end.Services
             _accountRepository = accountRepository;
         }
 
-        public async Task<List<AccountResponseDto>> GetAllAccountsAsync()
+        public async Task<List<ReceiveAccountDto>> GetAllAccountsAsync()
         {
             var accounts = await _accountRepository.GetAllAsync();
             return accounts.Select(account => MapToDto(account)).ToList();
         }
 
-        public async Task<AccountResponseDto> GetAccountByIdAsync(string id)
+        public async Task<ReceiveAccountDto> GetAccountByIdAsync(string id)
         {
             var account = await _accountRepository.GetByIdAsync(id);
             if (account == null)
@@ -32,7 +32,7 @@ namespace back_end.Services
 
             return MapToDto(account);
         }
-        public async Task<AccountResponseDto> CreateAccountAsync(CreateAccountDto createAccountDto)
+        public async Task<ReceiveAccountDto> CreateAccountAsync(CreateAccountDto createAccountDto)
         {
             var existingAccount = await _accountRepository.GetByUsernameAsync(createAccountDto.Username);
             if (existingAccount != null)
@@ -61,9 +61,9 @@ namespace back_end.Services
             await _accountRepository.DeleteAsync(id);
         }
 
-        public AccountResponseDto MapToDto(Account account)
+        public ReceiveAccountDto MapToDto(Account account)
         {
-            return new AccountResponseDto
+            return new ReceiveAccountDto
             {
                 Id = account.Id,
                 Username = account.Username,
