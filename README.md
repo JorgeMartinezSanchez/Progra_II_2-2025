@@ -356,4 +356,8 @@ Este proyecto es un trabajo académico para la materia de Programación II.
 ---
 
 **Última actualización:** Noviembre 2024  
+<<<<<<< HEAD
 **Estado del proyecto:** 🟢 Backend 90% completo (API funcional y segura)
+=======
+**Estado del proyecto:** 🟢 Backend 90% completo (API funcional y segura)
+>>>>>>> 1de0db72e30825c34308c10b8851561c854e564a
