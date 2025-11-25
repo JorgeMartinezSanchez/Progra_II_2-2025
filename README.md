@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-# FrontEnd
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
-=======
 # SafeChat - Backend de Aplicación de Mensajería Cifrada End-to-End
 
 **Carrera:** Ingeniería de Software  
@@ -10,18 +5,7 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 **Periodo:** Segundo Parcial / Proyecto Final  
 **Estudiante:** Jorge Martínez Sánchez  
 **Fecha de entrega:** 2025-11-24 (Tentativa)
->>>>>>> 531df5df4f3d57a87d5f002d7ffa431f0ba70e65
 
-## Development server
-
-<<<<<<< HEAD
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 =======
 ## 📋 Datos Generales del Proyecto
 
@@ -33,22 +17,7 @@ Once the server is running, open your browser and navigate to `http://localhost:
 | **Base de datos** | MongoDB |
 | **Repositorio Git** | [github.com/JorgeMartinezSanchez/Progra_II_2-2025](https://github.com/JorgeMartinezSanchez/Progra_II_2-2025) |
 | **Uso de IA** | ✅ Sí (Claude AI / DeepSeek para guía técnica y arquitectura) |
->>>>>>> 531df5df4f3d57a87d5f002d7ffa431f0ba70e65
 
-## Code scaffolding
-
-<<<<<<< HEAD
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
 =======
 ## 🎯 Descripción del Proyecto
 
@@ -60,22 +29,7 @@ SafeChat es el backend de una aplicación de mensajería instantánea que implem
 2. **Privacidad**: El servidor nunca tiene acceso a las claves privadas ni al contenido de los mensajes
 3. **Arquitectura robusta**: Aplicar principios SOLID y patrones de diseño (Repository, Service Layer)
 4. **API RESTful**: Endpoints bien definidos para clientes seguros
->>>>>>> 531df5df4f3d57a87d5f002d7ffa431f0ba70e65
 
-## Building
-
-<<<<<<< HEAD
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 =======
 ## 🔐 Arquitectura de Seguridad
 
@@ -121,20 +75,7 @@ To execute unit tests with the [Karma](https://karma-runner.github.io) test runn
 3. **Capa 3**: Claves privadas RSA cifradas con contraseña del usuario (PBKDF2 + Salt único)
 
 **Resultado**: El servidor solo almacena datos cifrados que no puede descifrar.
->>>>>>> 531df5df4f3d57a87d5f002d7ffa431f0ba70e65
 
-```bash
-ng test
-```
-
-<<<<<<< HEAD
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
 =======
 ## 🏗️ Diseño Técnico y Aplicación de POO
 
@@ -205,14 +146,7 @@ El `DesencrypteService` proporciona múltiples métodos de descifrado:
   - `Message`: Mensajes cifrados con metadata
   - `PrivateChat`: Relaciones de chat entre usuarios
   - `ChatKeyStore`: Claves cifradas de chat (2 registros por chat)
->>>>>>> 531df5df4f3d57a87d5f002d7ffa431f0ba70e65
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-<<<<<<< HEAD
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+  
 =======
 ## ⚙️ Funcionalidades Implementadas
 
@@ -230,9 +164,7 @@ For more information on using the Angular CLI, including detailed command refere
 ### 🚧 Funcionalidades Pendientes
 
 - [ ] Autenticación con JWT tokens
-- [ ] Notificaciones en tiempo real (SignalR/WebSockets)
-- [ ] Recuperación de cuenta
-- [ ] Múltiples dispositivos por usuario
+- [ ] Notificaciones en tiempo real (Bun)
 
 ---
 
@@ -425,4 +357,3 @@ Este proyecto es un trabajo académico para la materia de Programación II.
 
 **Última actualización:** Noviembre 2024  
 **Estado del proyecto:** 🟢 Backend 90% completo (API funcional y segura)
->>>>>>> 531df5df4f3d57a87d5f002d7ffa431f0ba70e65
