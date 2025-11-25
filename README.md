@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-# FrontEnd
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
-=======
 # SafeChat - Backend de Aplicación de Mensajería Cifrada End-to-End
 
 **Carrera:** Ingeniería de Software  
@@ -10,18 +5,7 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 **Periodo:** Segundo Parcial / Proyecto Final  
 **Estudiante:** Jorge Martínez Sánchez  
 **Fecha de entrega:** 2025-11-24 (Tentativa)
->>>>>>> 531df5df4f3d57a87d5f002d7ffa431f0ba70e65
 
-## Development server
-
-<<<<<<< HEAD
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 =======
 ## 📋 Datos Generales del Proyecto
 
@@ -33,22 +17,7 @@ Once the server is running, open your browser and navigate to `http://localhost:
 | **Base de datos** | MongoDB |
 | **Repositorio Git** | [github.com/JorgeMartinezSanchez/Progra_II_2-2025](https://github.com/JorgeMartinezSanchez/Progra_II_2-2025) |
 | **Uso de IA** | ✅ Sí (Claude AI / DeepSeek para guía técnica y arquitectura) |
->>>>>>> 531df5df4f3d57a87d5f002d7ffa431f0ba70e65
 
-## Code scaffolding
-
-<<<<<<< HEAD
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
 =======
 ## 🎯 Descripción del Proyecto
 
