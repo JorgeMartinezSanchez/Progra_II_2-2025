@@ -1,10 +1,10 @@
-# SafeChat - Aplicación de Mensajería Cifrada End-to-End
+# SafeChat - Backend de Aplicación de Mensajería Cifrada End-to-End
 
 **Carrera:** Ingeniería de Software  
 **Materia:** Programación II  
 **Periodo:** Segundo Parcial / Proyecto Final  
 **Estudiante:** Jorge Martínez Sánchez  
-**Fecha de entrega:** 2025-12-02 (Tentativa)
+**Fecha de entrega:** 2025-11-24 (Tentativa)
 
 ---
 
@@ -13,8 +13,8 @@
 | Campo | Descripción |
 |--------|-------------|
 | **Nombre del proyecto** | SafeChat |
-| **Tipo de aplicación** | ✅ Aplicación Web |
-| **Tecnologías principales** | C# ASP.NET Core Web API + Angular + TypeScript |
+| **Tipo de aplicación** | ✅ API Backend |
+| **Tecnologías principales** | C# ASP.NET Core Web API |
 | **Base de datos** | MongoDB |
 | **Repositorio Git** | [github.com/JorgeMartinezSanchez/Progra_II_2-2025](https://github.com/JorgeMartinezSanchez/Progra_II_2-2025) |
 | **Uso de IA** | ✅ Sí (Claude AI / DeepSeek para guía técnica y arquitectura) |
@@ -23,14 +23,14 @@
 
 ## 🎯 Descripción del Proyecto
 
-SafeChat es una aplicación de mensajería instantánea que implementa **cifrado end-to-end (E2EE)** utilizando una combinación de **cifrado simétrico AES** y **cifrado asimétrico RSA**, garantizando que solo los participantes de una conversación puedan leer los mensajes.
+SafeChat es el backend de una aplicación de mensajería instantánea que implementa **cifrado end-to-end (E2EE)** utilizando una combinación de **cifrado simétrico AES** y **cifrado asimétrico RSA**, garantizando que solo los participantes de una conversación puedan leer los mensajes.
 
 ### Objetivos Principales
 
 1. **Seguridad**: Implementar cifrado end-to-end usando RSA-2048 y AES-256
 2. **Privacidad**: El servidor nunca tiene acceso a las claves privadas ni al contenido de los mensajes
 3. **Arquitectura robusta**: Aplicar principios SOLID y patrones de diseño (Repository, Service Layer)
-4. **Escalabilidad**: Diseño preparado para soportar múltiples chats simultáneos por usuario
+4. **API RESTful**: Endpoints bien definidos para clientes seguros
 
 ---
 
@@ -87,7 +87,7 @@ SafeChat es una aplicación de mensajería instantánea que implementa **cifrado
 
 - [x] **Encapsulamiento**: Repositorios y servicios con responsabilidades bien definidas
 - [x] **Uso de constructores**: Inyección de dependencias en todos los servicios
-- [x] **Herencia**: Clase base `APIdataReciever` para servicios del frontend
+- [x] **Herencia**: Clases base para entidades y servicios comunes
 - [x] **Polimorfismo**: Interfaces `IAccountService`, `IMessageService`, etc.
 - [x] **Interfaces**: Separación entre contratos (interfaces) e implementaciones
 - [x] **Inyección de Dependencias**: ASP.NET Core DI Container
@@ -103,7 +103,7 @@ SafeChat es una aplicación de mensajería instantánea que implementa **cifrado
 ┌──────────────────────────────────────────────────────────┐
 │                       SERVICES                           │
 │  AccountService │ MessageService │ PrivateChatService    │
-│                 ChatKeyStoreService                      │
+│                 ChatKeyStoreService │ DesencrypteService │
 └──────────────────────────────────────────────────────────┘
                          ↓
 ┌──────────────────────────────────────────────────────────┐
@@ -118,7 +118,7 @@ SafeChat es una aplicación de mensajería instantánea que implementa **cifrado
 └──────────────────────────────────────────────────────────┘
 ```
 
-### Clases Principales
+### Clases Principales del Backend
 
 | Clase | Responsabilidad |
 |-------|----------------|
@@ -130,6 +130,17 @@ SafeChat es una aplicación de mensajería instantánea que implementa **cifrado
 | `MessageService` | Lógica de envío/recepción de mensajes |
 | `PrivateChatService` | Gestión de chats y contactos |
 | `ChatKeyStoreService` | Distribución segura de claves |
+| `DesencrypteService` | Servicios de descifrado AES y RSA |
+
+### Servicios de Descifrado
+
+El `DesencrypteService` proporciona múltiples métodos de descifrado:
+
+- **`DesencryptePassword`**: Descifrado PBKDF2 + AES para contraseñas
+- **`DesencrypteWithAES`**: Descifrado AES directo con clave e IV
+- **`DesencrypteWithRSA`**: Descifrado RSA con clave privada
+- **`DesencrypteChatMessage`**: Especializado para mensajes de chat
+- **`DesencrypteChatKey`**: Especializado para claves de chat
 
 ### Persistencia de Datos
 
@@ -157,7 +168,6 @@ SafeChat es una aplicación de mensajería instantánea que implementa **cifrado
 
 ### 🚧 Funcionalidades Pendientes
 
-- [ ] Interfaz de usuario completa (Angular)
 - [ ] Autenticación con JWT tokens
 - [ ] Notificaciones en tiempo real (SignalR/WebSockets)
 - [ ] Recuperación de cuenta
@@ -174,70 +184,59 @@ SafeChat es una aplicación de mensajería instantánea que implementa **cifrado
 - **Driver**: MongoDB.Driver
 - **Patrón**: Repository + Service Layer
 - **Inyección de dependencias**: Built-in ASP.NET Core DI
-
-### Frontend
-- **Framework**: Angular 18+
-- **Lenguaje**: TypeScript 5.x
-- **HTTP Client**: RxJS + HttpClient
-- **Cifrado**: Web Crypto API (SubtleCrypto)
+- **Cifrado**: System.Security.Cryptography (AES, RSA, PBKDF2)
 
 ### Herramientas de Desarrollo
-- **IDE Backend**: Visual Studio 2022 / VS Code
-- **IDE Frontend**: VS Code
+- **IDE**: Visual Studio 2022 / VS Code
 - **API Testing**: Swagger UI / Postman
 - **Control de versiones**: Git + GitHub
 - **IA Asistente**: Claude AI (Anthropic) para arquitectura y debugging
 
 ---
 
-## 📦 Estructura del Proyecto
+## 📦 Estructura del Proyecto Backend
 
 ```
-Progra_II_2-2025/
+back-end/
 │
-├── back-end/                    # API en C#
-│   ├── Controllers/             # Endpoints REST
-│   │   ├── AccountController.cs
-│   │   ├── MessageController.cs
-│   │   ├── PrivateChatController.cs
-│   │   └── ChatKeyStoreController.cs
-│   │
-│   ├── Services/                # Lógica de negocio
-│   │   ├── AccountService.cs
-│   │   ├── MessageService.cs
-│   │   ├── PrivateChatService.cs
-│   │   └── ChatKeyStoreService.cs
-│   │
-│   ├── Repository/              # Acceso a datos
-│   │   ├── AccountRepository.cs
-│   │   ├── MessageRepository.cs
-│   │   ├── PrivateChatRepository.cs
-│   │   └── ChatKeyStoreRepository.cs
-│   │
-│   ├── Models/                  # Entidades MongoDB
-│   │   ├── Account.cs
-│   │   ├── Message.cs
-│   │   ├── PrivateChat.cs
-│   │   └── ChatKeyStore.cs
-│   │
-│   ├── DTOs/                    # Data Transfer Objects
-│   │   ├── CreateAccountDto.cs
-│   │   ├── ReceiveAccountDto.cs
-│   │   ├── CreateMessageDto.cs
-│   │   ├── ReceiveMessageDto.cs
-│   │   └── ...
-│   │
-│   ├── Interfaces/              # Contratos de servicios
-│   └── Program.cs               # Configuración y DI
+├── Controllers/             # Endpoints REST
+│   ├── AccountController.cs
+│   ├── MessageController.cs
+│   ├── PrivateChatController.cs
+│   └── ChatKeyStoreController.cs
 │
-└── front-end/                   # Cliente Angular
-    ├── src/
-    │   ├── app/
-    │   │   ├── services/        # Servicios HTTP
-    │   │   ├── interfaces/      # Tipos TypeScript
-    │   │   └── components/      # Componentes UI
-    │   └── ...
-    └── ...
+├── Services/                # Lógica de negocio
+│   ├── AccountService.cs
+│   ├── MessageService.cs
+│   ├── PrivateChatService.cs
+│   ├── ChatKeyStoreService.cs
+│   └── DesencrypteService.cs
+│
+├── Repository/              # Acceso a datos
+│   ├── AccountRepository.cs
+│   ├── MessageRepository.cs
+│   ├── PrivateChatRepository.cs
+│   └── ChatKeyStoreRepository.cs
+│
+├── Models/                  # Entidades MongoDB
+│   ├── Account.cs
+│   ├── Message.cs
+│   ├── PrivateChat.cs
+│   └── ChatKeyStore.cs
+│
+├── DTOs/                    # Data Transfer Objects
+│   ├── CreateAccountDto.cs
+│   ├── ReceiveAccountDto.cs
+│   ├── CreateMessageDto.cs
+│   ├── ReceiveMessageDto.cs
+│   ├── CreatePrivateChatDto.cs
+│   ├── ReceivePrivateChatDto.cs
+│   ├── CreateChatKeyStoreDto.cs
+│   ├── ReceiveChatKeyStoreDto.cs
+│   └── LoginDto.cs
+│
+├── Interfaces/              # Contratos de servicios
+└── Program.cs               # Configuración y DI
 ```
 
 ---
@@ -246,9 +245,7 @@ Progra_II_2-2025/
 
 ### Prerrequisitos
 - .NET SDK 9.0+
-- Node.js 18+ y npm
 - MongoDB 7.x (local o Atlas)
-- Angular CLI (`npm install -g @angular/cli`)
 
 ### Backend (API)
 
@@ -270,19 +267,6 @@ dotnet restore
 dotnet run
 # API disponible en: https://localhost:5053
 # Swagger UI en: https://localhost:5053/swagger
-```
-
-### Frontend (Angular)
-
-```bash
-cd front-end
-
-# Instalar dependencias
-npm install
-
-# Ejecutar en desarrollo
-ng serve
-# App disponible en: http://localhost:4200
 ```
 
 ---
@@ -332,6 +316,7 @@ ng serve
 - Salt único por usuario para derivación de claves
 - IV único por mensaje
 - Arquitectura "Zero Knowledge" del servidor
+- Validación de datos de entrada con Data Annotations
 
 ### Por Implementar 🚧
 - HTTPS obligatorio en producción
@@ -351,6 +336,7 @@ ng serve
 - **Async/Await**: Operaciones I/O no bloqueantes
 - **Error Handling**: Try-catch con respuestas HTTP apropiadas
 - **SOLID Principles**: Single Responsibility, Open/Closed, etc.
+- **Validation**: Data Annotations en DTOs
 
 ---
 
@@ -358,7 +344,7 @@ ng serve
 
 **Jorge Martínez Sánchez**  
 Ingeniería de Software  
-Universidad: *[Tu Universidad]*
+Universidad: *Universidad Catolica Boliviana San Pablo*
 
 ---
 
@@ -377,4 +363,4 @@ Este proyecto es un trabajo académico para la materia de Programación II.
 ---
 
 **Última actualización:** Noviembre 2024  
-**Estado del proyecto:** 🟡 En desarrollo activo (Backend 90% completo, Frontend 30%)
+**Estado del proyecto:** 🟢 Backend 90% completo (API funcional y segura)
