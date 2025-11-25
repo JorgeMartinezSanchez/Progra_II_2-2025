@@ -1,8 +1,18 @@
-import { Component, inject} from '@angular/core';
-import { ChatTest } from '../interfaces/testing_interfaces/chatTest';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs'; // 🔥 IMPORTANTE: Agrega esto
+
+// Componentes
 import { ChatComponent } from "../chat/chat.component";
+
+// Servicios Reales
+import { ChatService } from '../../services/chat/chat.service';
+import { StateService } from '../../services/State/state.service';
+
+// Interfaces Reales
+import { ReceiveChat } from '../../app/interfaces/receiveChat';
+import { RecieveAccount } from '../../app/interfaces/receiveAccount';
 
 @Component({
   selector: 'app-home',
@@ -11,117 +21,86 @@ import { ChatComponent } from "../chat/chat.component";
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
-  public profilePicture: boolean = false;
-  public chats: ChatTest[] = [];
-  public selectedChat: ChatTest | null = null;
-  private chatNamesId: string[] = [];
+export class HomeComponent implements OnInit, OnDestroy {
+  
+  // Estado del usuario actual (para mostrar tu foto y nombre en la esquina)
+  public currentUser: RecieveAccount | null = null;
+  
+  // Lista de chats reales cargados del backend
+  public chats: ReceiveChat[] = [];
+  
+  // Chat seleccionado para pasar al componente <app-chat>
+  public selectedChat: ReceiveChat | null = null;
+
+  public loading: boolean = true;
+
+  // Inyección de dependencias
   private router = inject(Router);
+  private chatService = inject(ChatService);
+  private stateService = inject(StateService);
 
-  // Mapeo de userId a nombres reales - PARAMETRIZABLE
-  public userMap: { [key: number]: string } = {
-    1: 'Jaime',      // Tú
-    2: 'Ana García',
-    3: 'Carlos López',
-    4: 'María Rodríguez',
-    5: 'Pedro Martínez',
-    6: 'Laura Sánchez'
-  };
+  private stateSubscription: Subscription | undefined;
 
-  // Método para seleccionar un chat
-  selectChat(chat: ChatTest) {
-    this.selectedChat = chat;
-    console.log('Chat seleccionado:', chat.name);
+  async ngOnInit() {
+    console.log('🏠 HomeComponent inicializando...');
+    
+    // Suscribirse UNA VEZ al estado inicial
+    this.stateSubscription = this.stateService.state$.subscribe(async (state) => {
+      console.log('🔄 Estado actualizado:', state.currentUser?.username);
+      
+      this.currentUser = state.currentUser;
+
+      // Solo redirigir si NO hay usuario Y no estamos ya en login
+      if (!this.currentUser) {
+        console.log('❌ No hay usuario, redirigiendo a login...');
+        if (this.router.url !== '/login') {
+          this.router.navigate(['/login']);
+        }
+        return;
+      }
+
+      // Solo cargar chats si hay usuario y no los tenemos ya
+      if (this.currentUser && this.chats.length === 0 && !this.loading) {
+        console.log('✅ Usuario válido, cargando chats...');
+        await this.loadChats();
+      }
+    });
   }
 
+  ngOnDestroy() {
+    // 🔥 IMPORTANTE: Limpiar suscripción
+    if (this.stateSubscription) {
+      this.stateSubscription.unsubscribe();
+      console.log('✅ Suscripción limpiada');
+    }
+  }
+
+  async loadChats() {
+    try {
+      this.loading = true;
+      console.log('📥 Cargando chats...');
+      this.chats = await this.chatService.loadMyChats();
+      console.log('✅ Chats cargados:', this.chats.length);
+    } catch (error) {
+      console.error('❌ Error cargando chats:', error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  // Seleccionar un chat de la lista
+  selectChat(chat: ReceiveChat) {
+    this.selectedChat = chat;
+    // Opcional: Marcar como visto, etc.
+  }
+
+  // Navegación (igual que tu prototipo)
   move(opcion: string){
     this.router.navigate([opcion]);
   }
 
-  // Método para obtener el nombre de un usuario por su ID
-  getUserName(userId: number): string {
-    return this.userMap[userId] || `Usuario ${userId}`;
-  }
-
-  // Método para agregar un nuevo usuario al mapeo
-  addUserToMap(userId: number, userName: string) {
-    this.userMap[userId] = userName;
-  }
-
-  ngOnInit() {
-    // Datos de ejemplo con userIds que corresponden al userMap
-    this.chats = [
-      {
-        chatId: '1',
-        name: 'Ana García',
-        lastMessage: 'Hola, ¿cómo estás?',
-        isEncrypted: true,
-        type: 'private',
-        emisorUser: 'jaime',
-        receptorUser: 'ana',
-        messages: [
-          {
-            userId: 2, // Ana García
-            message: 'Hola, ¿cómo estás?',
-            sendDate: new Date()
-          },
-          {
-            userId: 1, // Jaime (tú)
-            message: '¡Hola Ana! Todo bien, ¿y tú?',
-            sendDate: new Date()
-          }
-        ]
-      },
-      {
-        chatId: '2',
-        name: 'Grupo Familia',
-        lastMessage: 'María: Feliz cumpleaños!',
-        isEncrypted: true,
-        type: 'group',
-        members: ['Jaime', 'Ana García', 'Carlos López', 'María Rodríguez'],
-        messages: [
-          {
-            userId: 4, // María Rodríguez
-            message: '¡Feliz cumpleaños Jaime! 🎉',
-            sendDate: new Date(Date.now() - 3600000) // 1 hora atrás
-          },
-          {
-            userId: 3, // Carlos López
-            message: 'Felicidades hermano 🥳',
-            sendDate: new Date(Date.now() - 1800000) // 30 minutos atrás
-          },
-          {
-            userId: 2, // Ana García
-            message: '¡Muchas felicidades! ¿Planes para celebrar?',
-            sendDate: new Date(Date.now() - 900000) // 15 minutos atrás
-          },
-          {
-            userId: 1, // Jaime (tú)
-            message: '¡Gracias a todos! Los espero en mi casa a las 8pm 🎂',
-            sendDate: new Date()
-          }
-        ]
-      },
-      {
-        chatId: '3',
-        name: 'Equipo Trabajo',
-        lastMessage: 'Pedro: Reunión a las 3pm',
-        isEncrypted: true,
-        type: 'group',
-        members: ['Jaime', 'Pedro Martínez', 'Laura Sánchez'],
-        messages: [
-          {
-            userId: 5, // Pedro Martínez
-            message: 'Recordatorio: reunión de equipo hoy a las 3pm',
-            sendDate: new Date(Date.now() - 7200000) // 2 horas atrás
-          },
-          {
-            userId: 6, // Laura Sánchez
-            message: 'Llevo el reporte de ventas',
-            sendDate: new Date(Date.now() - 3600000) // 1 hora atrás
-          }
-        ]
-      }
-    ];
+  // Helper para mostrar foto por defecto si no tienen
+  getProfileImage(base64: string | undefined): string {
+    return base64 || '/assets/default-user.png'; // Asegúrate de tener una imagen default
   }
 }

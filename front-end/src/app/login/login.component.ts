@@ -32,26 +32,16 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Simular login (reemplaza con tu lógica real)
-    this.simulateLogin();
-  }
-
-  private simulateLogin() {
-    // Simular una llamada a la API
-    setTimeout(() => {
-      // Aquí deberías usar this.authService.login() con tu backend real
-      if (this.credentials.username && this.credentials.password) {
-        // Guardar token simulado
-        localStorage.setItem('authToken', 'simulated-token-' + Date.now());
-        localStorage.setItem('currentUser', this.credentials.username);
-        
-        // Redirigir al home
-        this.router.navigate(['/']);
-      } else {
-        this.errorMessage = 'Invalid credentials';
-      }
-      this.isLoading = false;
-    }, 1500);
+    this.authService.login(this.credentials.username, this.credentials.password)
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.errorMessage = err.error || 'Invalid username or password';
+          this.isLoading = false;
+        }
+      });
   }
 
   signUp() {

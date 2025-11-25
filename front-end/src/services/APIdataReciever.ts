@@ -5,6 +5,6 @@ export abstract class APIdataReciever{
     protected tokenKey = 'authToken';
 
     constructor(protected http: HttpClient, protected areaUrl: string) {
-        this.apiUrl = `http://localhost:5053/${areaUrl}`;
+        this.apiUrl = `http://localhost:5053/api/${areaUrl}`;
     }
 }

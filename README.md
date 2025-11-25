@@ -1,83 +1,59 @@
-# Propuesta Inicial de Proyecto – Chat cifrado
+# FrontEnd
 
-**Carrera:** Ingeniería de Software  
-**Materia:** Programación II
-**Periodo:** Segundo Parcial / Proyecto Final  
-**Estudiante(s):** *Jorge Martínez Sánchez*  
-**Fecha de entrega:** *2025-12-02 (Posiblemente)*  
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
 
----
+## Development server
 
-## 1. Datos Generales del Proyecto
+To start a local development server, run:
 
-| Campo | Descripción |
-|--------|-------------|
-| **Nombre del proyecto:** | *SafeChat* |
-| **Tipo de aplicación:** | ✅ Web |
-| **Lenguaje / entorno de desarrollo:** | C# Web API con Angular |
-| **Repositorio Git (URL):** | *https://github.com/JorgeMartinezSanchez/Progra_II_2-2025* |
-| **Uso de Inteligencia Artificial:** | ✅ Sí |
+```bash
+ng serve
+```
 
-**Si usas IA, explica brevemente cómo y en qué etapa contribuye:**  
-> _Puedo usar Deepseek para que me guie en el desarrollo de la API en c# y desarrollo de front end en typescript_
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
----
+## Code scaffolding
 
-## 2. Descripción del Proyecto
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
+```bash
+ng generate component component-name
+```
 
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-### Objetivos principales
-1.  *Permitir a los usuarios personalizar completamente su plato eligiendo entre múltiples ingredientes y categorías*
-2.  *Gestionar eficientemente el inventario de ingredientes y la preparación de pedidos*
-3.  *Proporcionar una experiencia de usuario intuitiva para realizar pedidos personalizados*
+```bash
+ng generate --help
+```
 
----
+## Building
 
-## 3. Diseño Técnico y Aplicación de POO
+To build the project run:
 
-### Principios de POO aplicados
-Marca los que planeas usar:
-- [x] Encapsulamiento (atributos privados y métodos públicos)
-- [x] Uso de constructores
-- [x] Herencia
-- [x] Polimorfismo
-- [x] Interfaces o clases abstractas
+```bash
+ng build
+```
 
-### Clases estimadas
-- **Cantidad inicial de clases:** *8-10*  
-- **Ejemplo de posibles clases:** *(Usuario, Ingrediente, PlatoPersonalizado, Pedido, CategoriaIngrediente, Factura, etc.)*
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Running unit tests
 
-### Persistencia de datos
-- [ ] Archivos locales  
-- [x] Base de datos  
-- [ ] En memoria (temporal)  
-- [ ] Otro: __________
+To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 
----
+```bash
+ng test
+```
 
-## 4. Funcionalidades Principales
+## Running end-to-end tests
 
-| Nº | Nombre de la funcionalidad | Descripción breve | Estado actual |
-|----|----------------------------|-------------------|----------------|
-| 1 | Registro y autenticación de usuarios | Permitir que los usuarios se registren e inicien sesión | ✅ Planeada ☐ En desarrollo |
-| 2 | Personalización de platos | Interfaz para seleccionar ingredientes por categoría | ✅ Planeada ☐ En desarrollo |
-| 3 | Proceso de checkout | Finalizar pedido y generar factura | ✅ Planeada ☐ En desarrollo |
-| 4 | Gestión de inventario | Administrar disponibilidad de ingredientes | ✅ Planeada ☐ En desarrollo |
+For end-to-end (e2e) testing, run:
 
-> *(Agrega más filas si lo necesitas.)*
+```bash
+ng e2e
+```
 
----
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
-## 5. Compromiso del Estudiante
+## Additional Resources
 
-Declaro que:
-- Entiendo los criterios de evaluación establecidos en las rúbricas.
-- Presentaré una demostración funcional del proyecto.
-- Defenderé el código que yo mismo implementé y explicaré las clases y métodos principales.
-- Si usé herramientas de IA, comprendo su funcionamiento y las adapté al contexto del proyecto.
-
-**Firma (nombre completo):** *Jorge Martínez Sánchez* 
-
----
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

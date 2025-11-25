@@ -1,6 +1,6 @@
 export interface CreateAccount {
     username: string            
-    base64pfp: string         
+    base64Pfp: string         
     publicKey: string         
     encryptedPrivateKey: string
     salt: string

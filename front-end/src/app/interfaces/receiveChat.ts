@@ -7,4 +7,5 @@ export interface ReceiveChat{
     contactId?: string
     contactUsername?: string
     contactBase64Pfp?: string
+    encryptedChatKeyForMe?: string
 }

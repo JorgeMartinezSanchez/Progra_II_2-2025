@@ -402,3 +402,18 @@
         height: 100px;
     }
 }
+
+/* Para alinear los botones de Random y Upload */
+.action-buttons-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+/* Reutilizamos el estilo de random-button para el label de upload */
+label.random-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}

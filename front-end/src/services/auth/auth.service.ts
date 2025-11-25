@@ -31,57 +31,93 @@ export class AuthService extends APIdataReciever {
    * 3. Descifra la PrivateKey en el cliente
    * 4. Actualiza el StateService global
    */
-  login(username: string, password: string): Observable<boolean> {
+  
+  /*login(username: string, password: string): Observable<boolean> {
+    // Validación básica
+    if (!username?.trim() || !password?.trim()) {
+      return throwError(() => new Error('Username and password are required'));
+    }
+
+    console.log('🔐 Attempting login for:', username);
+
     const loginData = { username, password };
 
-    // Paso 1: Llamada HTTP al backend (esperamos LoginResponse con salt y key cifrada)
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, loginData).pipe(
-      
-      // Paso 2: Encadenamos el proceso de desencriptado
+      tap(response => console.log('✅ Login response received')),
       switchMap(response => {
-        // Guardamos JWT
+        // Validar respuesta
+        if (!response?.encryptedPrivateKey || !response?.salt) {
+          throw new Error('Invalid server response - missing encryption data');
+        }
+
         this.saveToken(response.token);
 
-        // Convertimos la Promesa de desencriptado en un Observable
+        // Convertir promesa a observable
         return from(this.cryptoService.unlockPrivateKey(
           password,
           response.salt,
           response.encryptedPrivateKey
         )).pipe(
-          // Paso 3: Si desencripta con éxito, actualizamos el Estado Global
-          map(decryptedPrivateKey => {
-            
-            // A. Preparamos el objeto de usuario (Datos públicos)
-            // Mapeamos la respuesta a tu interfaz RecieveAccount
+          map(privateKey => {
             const userProfile: RecieveAccount = {
-              accountId: response.accountId, // Asegúrate que tu LoginResponse tenga estos campos
+              accountId: response.accountId,
               username: response.username,
               base64Pfp: response.base64Pfp,
               publicKey: response.publicKey,
-              createdAt: response.createdAt,
-              updatedAt: response.updatedAt
+              createdAt: new Date(response.createdAt),
+              updatedAt: new Date(response.updatedAt)
             };
 
-            // B. Preparamos las llaves de sesión (Datos privados en memoria)
-            const sessionKeys = {
-              userPrivateKey: decryptedPrivateKey,
-              // derivedPasswordKey: undefined // Opcional (ya le pusimos '?' en la interfaz)
-            };
-
-            // C. ¡ACTUALIZAMOS EL STATE SERVICE!
-            // A partir de aquí, toda la app sabe que estás logueado y tiene tus llaves
-            this.stateService.setLoginSuccess(userProfile, sessionKeys);
-
-            return true; // Login exitoso
+            this.stateService.setLoginSuccess(userProfile, { 
+              userPrivateKey: privateKey 
+            });
+            
+            console.log('✅ Login completed successfully');
+            return true;
           })
         );
       }),
-      
-      // Manejo de errores (Credenciales mal o Password incorrecto al descifrar)
-      catchError(err => {
-        console.error("Login fallido:", err);
-        this.logout(); // Limpiamos por si acaso
-        return throwError(() => new Error('Credenciales inválidas o error de seguridad.'));
+      catchError(error => {
+        console.error('❌ Login failed:', error);
+        this.logout();
+        
+        let userMessage = 'Login failed';
+        if (error.status === 401) userMessage = 'Invalid credentials';
+        if (error.status === 0) userMessage = 'Cannot connect to server';
+        
+        return throwError(() => new Error(userMessage));
+      })
+    );
+  }*/
+  
+  login(username: string, password: string): Observable<boolean> {
+    console.log('🔐 SIMPLE LOGIN - bypassing crypto');
+    
+    const loginData = { username, password };
+    
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, loginData).pipe(
+      map(response => {
+        this.saveToken(response.token);
+        
+        const userProfile: RecieveAccount = {
+          accountId: response.accountId,
+          username: response.username,
+          base64Pfp: response.base64Pfp,
+          publicKey: response.publicKey,
+          createdAt: new Date(response.createdAt),
+          updatedAt: new Date(response.updatedAt)
+        };
+        
+        // Usar una clave dummy temporal
+        this.stateService.setLoginSuccess(userProfile, { 
+          userPrivateKey: {} as CryptoKey 
+        });
+        
+        return true;
+      }),
+      catchError(error => {
+        console.error('Login error:', error);
+        return throwError(() => new Error('Login failed'));
       })
     );
   }

@@ -2,10 +2,13 @@
     <div class="main-signin-div">
         <h1>Create Account</h1>
         
-        <!-- Mostrar la imagen seleccionada o placeholder -->
         <div class="profile-picture" (click)="editPfp = true">
-            <img *ngIf="selectedProfilePic" [src]="selectedProfilePic" class="selected-profile-img">
-            <span *ngIf="!selectedProfilePic">Click to choose profile picture</span>
+            <img *ngIf="previewUrl" 
+                 [src]="previewUrl" 
+                 class="selected-profile-img" 
+                 (error)="handleImageError($event)">
+            
+            <span *ngIf="!previewUrl">Click to choose profile picture</span>
         </div>
 
         <div class="username-password-input">
@@ -28,15 +31,28 @@
                         *ngFor="let pic of profilePictures; let i = index" 
                         [src]="pic" 
                         class="profile-picture-option"
-                        [class.selected]="selectedProfilePic === pic"
+                        [class.selected]="previewUrl === pic" 
                         (click)="selectProfilePicture(pic)"
                         [alt]="'Profile picture option ' + (i + 1)"
                         (error)="handleImageError($event)">
                 </div>
 
-                <button class="random-button" (click)="selectRandomPicture()">
-                    🎲 Choose Random
-                </button>
+                <div class="action-buttons-container" style="display: flex; gap: 10px; justify-content: center; margin: 15px 0;">
+                    
+                    <button class="random-button" (click)="selectRandomPicture()">
+                        🎲 Random
+                    </button>
+
+                    <label for="fileUploadInput" class="random-button" style="cursor: pointer; background-color: #4CAF50;">
+                        📂 Upload Own
+                    </label>
+                    <input 
+                        id="fileUploadInput"
+                        type="file" 
+                        accept="image/*" 
+                        (change)="onFileSelected($event)" 
+                        style="display: none;">
+                </div>
 
                 <div class="edit-profile-buttons">
                     <button class="edit-profile-button confirm" (click)="confirmProfilePicture()">

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChatTest } from '../interfaces/testing_interfaces/chatTest';
-import { GroupTest } from '../interfaces/testing_interfaces/groupTest';
-import { privateChatTest } from '../interfaces/testing_interfaces/privateChatTest';
-import { MessageTest } from '../interfaces/testing_interfaces/messageTest';
+import { ReceiveChat } from '../interfaces/receiveChat';
+import { ReceiveMessage } from '../interfaces/receiveMessage';
+import { MessageService } from '../../services/message/message.service';
+import { StateService } from '../../services/State/state.service';
 
 @Component({
   selector: 'app-chat',
@@ -13,58 +13,96 @@ import { MessageTest } from '../interfaces/testing_interfaces/messageTest';
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
-export class ChatComponent implements OnChanges {
+export class ChatComponent implements OnChanges, OnInit {
   private router = inject(Router);
+  private messageService = inject(MessageService);
+  private stateService = inject(StateService);
+  
   public chatIsOpen = false;
-  public currentChat: ChatTest | null = null;
+  public currentChat: ReceiveChat | null = null;
+  public messages: ReceiveMessage[] = [];
+  public loadingMessages = false;
+  
+  @Input() chatData: ReceiveChat | null = null;
+  @Input() userMap: { [key: string]: string } = {}; // Cambiado a string para accountId
+  @Output() chatOutput = new EventEmitter<ReceiveChat>();
 
-  @Input() usuario!: ChatTest | null;
-  @Input() userMap: { [key: number]: string } = {}; // <-- NUEVO INPUT
-  @Output() chatOutput = new EventEmitter<ChatTest>();
-
-  // Type Guards
-  isGroupChat(chat: ChatTest | null): chat is GroupTest {
-    return chat !== null && chat.type === 'group' && 'members' in chat;
-  }
-
-  isPrivateChat(chat: ChatTest | null): chat is privateChatTest {
-    return chat !== null && chat.type === 'private' && 'emisorUser' in chat && 'receptorUser' in chat;
-  }
-
-  // Método para obtener el nombre del remitente (solo para grupos)
-  getSenderName(message: MessageTest, chat: ChatTest): string {
-    if (this.isGroupChat(chat)) {
-      // Usa el userMap que viene del home component
-      return this.userMap[message.userId] || `Usuario ${message.userId}`;
-    }
-    return ''; // En chats privados no mostramos nombre
+  ngOnInit() {
+    // Suscribirse a cambios de estado por si se cierra sesión
+    this.stateService.state$.subscribe(state => {
+      if (!state.currentUser) {
+        this.currentChat = null;
+        this.chatIsOpen = false;
+        this.messages = [];
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['usuario'] && changes['usuario'].currentValue) {
-      this.currentChat = changes['usuario'].currentValue;
+    if (changes['chatData'] && changes['chatData'].currentValue) {
+      this.currentChat = changes['chatData'].currentValue;
       this.chatIsOpen = true;
       console.log('Chat cargado:', this.currentChat);
+      this.loadMessages();
     } else {
       this.currentChat = null;
       this.chatIsOpen = false;
+      this.messages = [];
     }
+  }
+
+  async loadMessages() {
+    if (!this.currentChat?.chatId) return;
+    
+    try {
+      this.loadingMessages = true;
+      this.messages = await this.messageService.getMessagesByChat(this.currentChat.chatId);
+      console.log('Mensajes cargados:', this.messages);
+    } catch (error) {
+      console.error('Error cargando mensajes:', error);
+    } finally {
+      this.loadingMessages = false;
+    }
+  }
+
+  // Método para obtener el nombre del remitente
+  getSenderName(message: ReceiveMessage): string {
+    // Si el mensaje es del usuario actual, no mostrar nombre
+    if (message.senderId === this.stateService.currentState.currentUser?.accountId) {
+      return '';
+    }
+    
+    // Usar el userMap que viene del home component
+    return this.userMap[message.senderId] || `Usuario ${message.senderId}`;
+  }
+
+  // Verificar si el mensaje es propio
+  isOwnMessage(message: ReceiveMessage): boolean {
+    return message.senderId === this.stateService.currentState.currentUser?.accountId;
   }
 
   goBack() {
     this.router.navigate(['/']);
   }
 
-  sendMessage(message: string) {
+  async sendMessage(message: string) {
     if (this.currentChat && message.trim()) {
-      const newMessage = {
-        userId: 1, // ID del usuario actual (Jaime)
-        message: message,
-        sendDate: new Date()
-      };
-      
-      this.currentChat.messages.push(newMessage);
-      this.currentChat.lastMessage = message;
+      try {
+        await this.messageService.sendMessage(this.currentChat.chatId, message);
+        
+        // Recargar mensajes para mostrar el nuevo
+        await this.loadMessages();
+      } catch (error) {
+        console.error('Error enviando mensaje:', error);
+      }
     }
+  }
+
+  // Formatear fecha para mostrar
+  formatMessageTime(timestamp: string): string {
+    return new Date(timestamp).toLocaleTimeString('es-ES', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
   }
 }

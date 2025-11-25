@@ -1,25 +1,23 @@
-<!-- home.component.html -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <div class="home-container">
     <div class="main-container">
-        <!-- Header del usuario -->
+        
         <div class="account-settings">
-            @if(!profilePicture){
-                <i class="fas fa-user-circle profile-icon" (click)="move('/user-config')"></i>
+            @if(currentUser?.base64Pfp){
+                <img [src]="currentUser!.base64Pfp" class="profile-image" (click)="move('/user-config')">
             } @else {
-                <img src="ruta/a/tu/foto.jpg" alt="Foto de perfil" class="profile-image">
+                <i class="fas fa-user-circle profile-icon" (click)="move('/user-config')"></i>
             }
-            <h2>{{ userMap[1] }}</h2> <!-- Muestra "Jaime" -->
+            
+            <h2>{{ currentUser?.username || 'Loading...' }}</h2> 
         </div>
 
-        <!-- Botón añadir contacto -->
-        @if(chats.length != 0){
+        @if(!loading){
             <i class="fas fa-plus add-icon" title="Add new contact" (click)="move('/add-contact')"></i>
         }
 
-        <!-- Para el widget vacío -->
-        @if(chats.length == 0){
+        @if(chats.length == 0 && !loading){
             <div class="empty-chat-widget" (click)="move('/add-contact')">
                 <i class="fas fa-plus add-icon-bigger"></i>
                 <p>Your chat is empty, click to add a new secure contact</p>
@@ -27,25 +25,27 @@
         } @else {
             <div class="chat-list">
                 @for(chat of chats; track chat.chatId){
-                    <div class="chat-widget" (click)="selectChat(chat)">
+                    <div class="chat-item" 
+                         [class.active]="selectedChat?.chatId === chat.chatId"
+                         (click)="selectChat(chat)">
+                        
                         <div class="chat-avatar">
-                            {{ chat.name.charAt(0).toUpperCase() }}
+                            @if(chat.contactBase64Pfp){
+                                <img [src]="chat.contactBase64Pfp" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                            } @else {
+                                {{ chat.contactUsername?.charAt(0)?.toUpperCase() }}
+                            }
                         </div>
+
                         <div class="chat-info">
-                            <h3 class="chat-name">{{ chat.name }}</h3>
+                            <h3 class="chat-name">{{ chat.contactUsername }}</h3>
+                            
                             <p class="chat-preview">
-                                @if(chat.isEncrypted){
-                                    <i class="fas fa-lock encrypted-icon"></i>
-                                }
-                                <!-- Muestra el nombre del último mensaje si es grupo -->
-                                @if(chat.type === 'group' && chat.lastMessage && chat.messages.length > 0){
-                                    @let lastMessage = chat.messages[chat.messages.length - 1];
-                                    {{ getUserName(lastMessage.userId) }}: {{ chat.lastMessage }}
-                                } @else if (chat.type === 'group' && chat.lastMessage) {
-                                    {{ chat.lastMessage }}
-                                } @else {
-                                    {{ chat.lastMessage || 'No messages yet' }}
-                                }
+                                <i class="fas fa-lock encrypted-icon"></i>
+                                
+                                <span style="font-size: 0.8em; opacity: 0.7;">
+                                    {{ chat.lastActivity | date:'short' }}
+                                </span>
                             </p>
                         </div>
                     </div>
@@ -55,7 +55,12 @@
     </div>
 
     <div class="chat-container">
-        <!-- Pasa el chat seleccionado Y el userMap al componente chat -->
-        <app-chat [usuario]="selectedChat" [userMap]="userMap"></app-chat>
+        @if(selectedChat) {
+            <app-chat [chatData]="selectedChat"></app-chat>
+        } @else {
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: #666;">
+                <p>Select a chat to start encryption</p>
+            </div>
+        }
     </div>
 </div>

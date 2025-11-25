@@ -12,10 +12,27 @@ namespace back_end.Services
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly IDesencrypteService _desencrypteService;
 
-        public AccountService(IAccountRepository accountRepository)
+        public AccountService(IAccountRepository accountRepository, IDesencrypteService desencrypteService)
         {
             _accountRepository = accountRepository;
+            _desencrypteService = desencrypteService;
+        }
+        
+        public async Task<ReceiveAccountDto> LoginAsync(string username, string password)
+        {
+            var account = await _accountRepository.GetByUsernameAsync(username);
+            if (account == null)
+                throw new UnauthorizedAccessException("Usuario o contraseña incorrectos");
+
+            // Aquí necesitas la clave de encriptación - puedes obtenerla de configuración
+            var encryptionKey = "tu-clave-secreta-de-encriptacion"; // Mover a appsettings
+            
+            if (!_desencrypteService.VerifyPassword(password, account.EncryptedPrivateKey, account.Salt, encryptionKey))
+                throw new UnauthorizedAccessException("Usuario o contraseña incorrectos");
+
+            return MapToDto(account);
         }
 
         public async Task<List<ReceiveAccountDto>> GetAllAccountsAsync()

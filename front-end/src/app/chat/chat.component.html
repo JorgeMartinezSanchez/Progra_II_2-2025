@@ -7,46 +7,50 @@
                 <i class="fas fa-arrow-left"></i>
             </button>
             <div class="chat-avatar">
-                {{ currentChat.name.charAt(0).toUpperCase() }}
+                @if(currentChat.contactBase64Pfp) {
+                    <img [src]="currentChat.contactBase64Pfp" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                } @else {
+                    {{ currentChat.contactUsername?.charAt(0)?.toUpperCase() }}
+                }
             </div>
             <div class="chat-info">
-                <h2 class="chat-title">{{ currentChat.name }}</h2>
+                <h2 class="chat-title">{{ currentChat.contactUsername }}</h2>
                 <p class="chat-status">
-                    @if(currentChat.isEncrypted) {
-                        <i class="fas fa-lock"></i> Chat encriptado
-                    } @else {
-                        <i class="fas fa-unlock"></i> Chat no encriptado
-                    }
-                    @if(isGroupChat(currentChat)) {
-                        • <i class="fas fa-users"></i> {{ currentChat.members.length }} miembros
-                    }
+                    <i class="fas fa-lock"></i> Chat encriptado
+                    • <i class="fas fa-user"></i> Chat privado
                 </p>
             </div>
         </div>
 
         <!-- Área de mensajes -->
         <div class="messages-container">
-            @for(message of currentChat.messages; track message.sendDate) {
-                <div class="message" [class.own-message]="message.userId === 1">
-                    
-                    <!-- Mostrar nombre del remitente solo en grupos -->
-                    @if(isGroupChat(currentChat) && message.userId !== 1) {
-                        <div class="sender-name">
-                            {{ getSenderName(message, currentChat) }}
-                        </div>
-                    }
-                    
-                    <div class="message-content">
-                        <p>{{ message.message }}</p>
-                        <span class="message-time">
-                            {{ message.sendDate | date:'HH:mm' }}
-                        </span>
-                    </div>
-                </div>
-            } @empty {
+            @if(loadingMessages) {
                 <div class="empty-messages">
-                    <p>No hay mensajes aún. ¡Envía el primero!</p>
+                    <p>Cargando mensajes...</p>
                 </div>
+            } @else {
+                @for(message of messages; track message.messageId) {
+                    <div class="message" [class.own-message]="isOwnMessage(message)">
+                        
+                        <!-- Mostrar nombre del remitente si no es propio -->
+                        @if(!isOwnMessage(message)) {
+                            <div class="sender-name">
+                                {{ getSenderName(message) }}
+                            </div>
+                        }
+                        
+                        <div class="message-content">
+                            <p>{{ message.content || '🔒 Mensaje cifrado' }}</p>
+                            <span class="message-time">
+                                {{ formatMessageTime(message.timeStamp) }}
+                            </span>
+                        </div>
+                    </div>
+                } @empty {
+                    <div class="empty-messages">
+                        <p>No hay mensajes aún. ¡Envía el primero!</p>
+                    </div>
+                }
             }
         </div>
 

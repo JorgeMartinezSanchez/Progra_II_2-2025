@@ -45,6 +45,8 @@ builder.Services.AddScoped<IPrivateChatService, PrivateChatService>();
 builder.Services.AddScoped<IChatKeyStoreRepository, ChatKeyStoreRepository>();
 builder.Services.AddScoped<IChatKeyStoreService, ChatKeyStoreService>();
 
+builder.Services.AddScoped<IDesencrypteService, DesencrypteService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -54,6 +56,14 @@ builder.Services.AddSwaggerGen(c =>
         Title = "SafeChat API",
         Version = "v1"
     });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy => policy.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin());
 });
 
 var app = builder.Build();
@@ -68,6 +78,8 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger";
     });
 }
+
+app.UseCors("AllowAngular");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

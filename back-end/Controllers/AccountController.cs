@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using back_end.Interfaces;
 using back_end.DTOs;
+using System.Diagnostics;
 
 namespace back_end.Controllers
 {
@@ -12,6 +13,30 @@ namespace back_end.Controllers
         public AccountController(IAccountService accountService)
         {
             _accountService = accountService;
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LogIn([FromBody] LoginDto loginDto)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(loginDto.Username) || string.IsNullOrEmpty(loginDto.Password))
+                    return BadRequest(new { message = "Username y password son requeridos" });
+
+                var account = await _accountService.LoginAsync(loginDto.Username, loginDto.Password);
+                return Ok(new { 
+                    message = "Login exitoso",
+                    account = account
+                });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Internal server error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
