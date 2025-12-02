@@ -7,7 +7,7 @@ namespace back_end.Interfaces
         Task<List<Account>> GetAllAsync();
         Task<Account> GetByIdAsync(string id);
         Task<Account> CreateAsync(Account account);
-        Task UpdateAsync(string id, Account account);
+        Task<Account> UpdateAsync(string id, Account account);
         Task DeleteAsync(string id);
         Task<Account> GetByUsernameAsync(string username);
     }

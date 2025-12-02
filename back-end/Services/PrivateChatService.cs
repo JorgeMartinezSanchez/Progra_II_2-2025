@@ -1,6 +1,7 @@
 using back_end.DTOs;
 using back_end.Interfaces;
 using back_end.Models;
+using back_end.Exceptions;
 
 namespace back_end.Services
 {
@@ -10,33 +11,38 @@ namespace back_end.Services
         private readonly IChatKeyStoreRepository _chatKeyStoreRepository;
         private readonly IAccountService _accountService;
         private readonly IMessageService _messageService;
+        private readonly IEncryptationService _encryptationService;
 
         public PrivateChatService(
             IPrivateChatRepository privateChatRepository, 
             IChatKeyStoreRepository chatKeyStoreRepository,
             IAccountService accountService,
-            IMessageService messageService)
+            IMessageService messageService,
+            IEncryptationService encryptationService)
         {
             _privateChatRepository = privateChatRepository;
             _chatKeyStoreRepository = chatKeyStoreRepository;
             _accountService = accountService;
             _messageService = messageService;
+            _encryptationService = encryptationService;
         }
         
-        public async Task<bool> AlreadyAddedContactAsync(string id, string SendingUsername)
+        public async Task<bool> AlreadyAddedContactAsync(string id, string sendingUsername)
         {
-            var You = await _accountService.GetAccountByIdAsync(id);
-            var AllContacts = await _privateChatRepository.GetAllAsync();
+            var you = await _accountService.GetAccountByIdAsync(id);
+            var allContacts = await _privateChatRepository.GetAllAsync();
 
-            foreach (var Contact in AllContacts)
+            foreach (var contact in allContacts)
             {
-                var Account1 = await _accountService.GetAccountByIdAsync(Contact.Account1Id);
-                var Account2 = await _accountService.GetAccountByIdAsync(Contact.Account2Id);
+                var account1 = await _accountService.GetAccountByIdAsync(contact.Account1Id);
+                var account2 = await _accountService.GetAccountByIdAsync(contact.Account2Id);
 
-                bool ContactHasOneOfTheSendingUsernames = Account1.Username == SendingUsername || Account2.Username == SendingUsername;
-                bool ContactHasYourUsername = Account1.Username == You.Username || Account2.Username == You.Username;
+                bool contactHasOneOfTheSendingUsernames = 
+                    account1.Username == sendingUsername || account2.Username == sendingUsername;
+                bool contactHasYourUsername = 
+                    account1.Username == you.Username || account2.Username == you.Username;
 
-                if(ContactHasOneOfTheSendingUsernames && ContactHasYourUsername)
+                if (contactHasOneOfTheSendingUsernames && contactHasYourUsername)
                 {
                     return true;
                 }
@@ -44,84 +50,102 @@ namespace back_end.Services
             return false;
         }
 
-        public async Task<ReceivePrivateChatDto> CreatePrivateChatAsync(CreatePrivateChatDto newPrivateChatParam)
+        public async Task<ReceivePrivateChatDto> CreatePrivateChatAsync(CreatePrivateChatDto newPrivateChatDto)
         {
-            if (string.IsNullOrWhiteSpace(newPrivateChatParam.EncryptedChatKeyForMe)) 
-                throw new ArgumentException("Encrypted chat key for me is required");
+            // 1. Verificar si ya existe chat
+            if (await AlreadyAddedContactAsync(newPrivateChatDto.AccountId, newPrivateChatDto.SendingUsername))
+                throw new InvalidOperationException("Chat already exists with this user.");
 
-            if (string.IsNullOrWhiteSpace(newPrivateChatParam.EncryptedChatKeyForThem)) 
-                throw new ArgumentException("Encrypted chat key for them is required");
+            // 2. Obtener mi información
+            var myAccount = await _accountService.GetAccountByIdAsync(newPrivateChatDto.AccountId);
+            
+            // 3. Buscar al otro usuario
+            var allAccounts = await _accountService.GetAllAccountsAsync();
+            var targetAccount = allAccounts.FirstOrDefault(a => a.Username == newPrivateChatDto.SendingUsername);
+            
+            if (targetAccount == null) 
+                throw new KeyNotFoundException("User doesn't exist.");
 
-            if (!await AlreadyAddedContactAsync(newPrivateChatParam.AccountId, newPrivateChatParam.SendingUsername))
+            // 4. Generar clave AES para el chat (256 bits)
+            var chatAesKey = _encryptationService.GenerateRandomAesKey();
+
+            // 5. Obtener claves públicas de ambos usuarios
+            var myPublicKey = myAccount.PublicKey;
+            var targetPublicKey = targetAccount.PublicKey;
+
+            // 6. Cifrar la clave AES con RSA pública de cada usuario
+            var encryptedForMe = _encryptationService.EncryptWithRsa(chatAesKey, myPublicKey);
+            var encryptedForThem = _encryptationService.EncryptWithRsa(chatAesKey, targetPublicKey);
+
+            // 7. Crear el chat (ordenar IDs para consistencia)
+            string account1Id, account2Id;
+            if (string.Compare(newPrivateChatDto.AccountId, targetAccount.Id) < 0)
             {
-                var allAccounts = await _accountService.GetAllAccountsAsync();
-                var targetAccount = allAccounts.FirstOrDefault(a => a.Username == newPrivateChatParam.SendingUsername);
-                
-                if (targetAccount == null) throw new KeyNotFoundException("User doesn't exist.");
-
-                string account1Id, account2Id;
-                if (string.Compare(newPrivateChatParam.AccountId, targetAccount.Id) < 0)
-                {
-                    account1Id = newPrivateChatParam.AccountId;
-                    account2Id = targetAccount.Id;
-                }
-                else
-                {
-                    account1Id = targetAccount.Id;
-                    account2Id = newPrivateChatParam.AccountId;
-                }
-
-                var newPrivateChat = new PrivateChat
-                {
-                    Account1Id = account1Id,
-                    Account2Id = account2Id,
-                    CreatedAt = DateTime.UtcNow,
-                    LastActivity = DateTime.UtcNow
-                };
-
-                var createdChat = await _privateChatRepository.CreateAsync(newPrivateChat);
-                
-                // Guardar clave para el usuario actual
-                await _chatKeyStoreRepository.CreateAsync(new ChatKeyStore
-                {
-                    AccountId = newPrivateChatParam.AccountId,
-                    ChatId = createdChat.Id,
-                    EncryptedChatKey = newPrivateChatParam.EncryptedChatKeyForMe,
-                    CreatedAt = DateTime.UtcNow
-                });
-                
-                // Guardar clave para el otro usuario
-                await _chatKeyStoreRepository.CreateAsync(new ChatKeyStore
-                {
-                    AccountId = targetAccount.Id,
-                    ChatId = createdChat.Id,
-                    EncryptedChatKey = newPrivateChatParam.EncryptedChatKeyForThem,
-                    CreatedAt = DateTime.UtcNow
-                });
-                
-                return await MapToDto(createdChat, newPrivateChatParam.AccountId);
+                account1Id = newPrivateChatDto.AccountId;
+                account2Id = targetAccount.Id;
             }
             else
             {
-                throw new InvalidOperationException("Chat already exists with this user.");
+                account1Id = targetAccount.Id;
+                account2Id = newPrivateChatDto.AccountId;
             }
+
+            var newPrivateChat = new PrivateChat
+            {
+                Account1Id = account1Id,
+                Account2Id = account2Id,
+                CreatedAt = DateTime.UtcNow,
+                LastActivity = DateTime.UtcNow
+            };
+
+            var createdChat = await _privateChatRepository.CreateAsync(newPrivateChat);
+            
+            // 8. Guardar claves cifradas para ambos usuarios en ChatKeyStore
+            await _chatKeyStoreRepository.CreateAsync(new ChatKeyStore
+            {
+                AccountId = newPrivateChatDto.AccountId,
+                ChatId = createdChat.Id,
+                EncryptedChatKey = encryptedForMe,
+                CreatedAt = DateTime.UtcNow
+            });
+            
+            await _chatKeyStoreRepository.CreateAsync(new ChatKeyStore
+            {
+                AccountId = targetAccount.Id,
+                ChatId = createdChat.Id,
+                EncryptedChatKey = encryptedForThem,
+                CreatedAt = DateTime.UtcNow
+            });
+            
+            return await MapToDto(createdChat, newPrivateChatDto.AccountId);
         }
 
         public async Task DeleteChatAsync(string chatId)
         {
-            List<ReceiveMessageDto> messages = await _messageService.GetMessagesByPrivateChatAsync(chatId);
+            // Verificar que el chat existe
+            var chat = await _privateChatRepository.GetByIdAsync(chatId);
+            if (chat == null)
+                throw new KeyNotFoundException($"Chat with ID {chatId} not found");
+
+            // Eliminar mensajes del chat
+            var messages = await _messageService.GetMessagesByPrivateChatAsync(chatId);
             await _messageService.DeleteManyMessagesAsync(messages);
+            
+            // Eliminar claves del chat
             await _chatKeyStoreRepository.DeleteByChatIdAsync(chatId);
+            
+            // Eliminar el chat
             await _privateChatRepository.DeleteAsync(chatId);
         }
+
         public async Task<List<ReceivePrivateChatDto>> LoadChats(string accountId)
         {
-            // ✅ Obtener todos los ChatKeyStore del usuario (1 query)
+            // Obtener todos los ChatKeyStore del usuario
             var userChatKeys = await _chatKeyStoreRepository.GetAllByUserIdAsync(accountId);
             
-            List<ReceivePrivateChatDto> allChats = new List<ReceivePrivateChatDto>();
+            var allChats = new List<ReceivePrivateChatDto>();
             
-            foreach(var chatKey in userChatKeys)
+            foreach (var chatKey in userChatKeys)
             {
                 var chat = await _privateChatRepository.GetByIdAsync(chatKey.ChatId);
                 
@@ -179,7 +203,32 @@ namespace back_end.Services
 
         public async Task<ReceivePrivateChatDto> GetPrivateChatById(string id)
         {
-            return MapToDto(await _privateChatRepository.GetByIdAsync(id));
+            var chat = await _privateChatRepository.GetByIdAsync(id);
+            if (chat == null)
+                throw new KeyNotFoundException($"Chat with ID {id} not found");
+                
+            return MapToDto(chat);
+        }
+
+        // Método para obtener la clave AES del chat (cifrada con RSA) para un usuario
+        public async Task<string> GetEncryptedChatKey(string userId, string chatId)
+        {
+            ChatKeyStore chatKeyStore = await _chatKeyStoreRepository.GetByUserAndChatAsync(userId, chatId);
+            if (chatKeyStore == null)
+                throw new KeyNotFoundException($"Chat key not found for user {userId} in chat {chatId}");
+                
+            return chatKeyStore.EncryptedChatKey;
+        }
+
+        // Método para actualizar última actividad
+        public async Task UpdateLastActivity(string chatId)
+        {
+            PrivateChat chat = await _privateChatRepository.GetByIdAsync(chatId);
+            if (chat == null)
+                throw new KeyNotFoundException($"Chat with ID {chatId} not found");
+
+            chat.LastActivity = DateTime.UtcNow;
+            await _privateChatRepository.UpdateAsync(chatId, chat);
         }
     }
 }

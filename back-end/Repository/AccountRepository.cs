@@ -33,9 +33,10 @@ namespace back_end.Repository
             return account;
         }
 
-        public async Task UpdateAsync(string id, Account account)
+        public async Task<Account> UpdateAsync(string id, Account account)
         {
             await _accounts.ReplaceOneAsync(a => a.Id == id, account);
+            return account;
         }
 
         public async Task DeleteAsync(string id)

@@ -23,7 +23,7 @@ namespace back_end.Controllers
                 if (string.IsNullOrEmpty(loginDto.Username) || string.IsNullOrEmpty(loginDto.Password))
                     return BadRequest(new { message = "Username y password son requeridos" });
 
-                var account = await _accountService.LoginAsync(loginDto.Username, loginDto.Password);
+                var account = await _accountService.LoginAsync(loginDto);
                 return Ok(new { 
                     message = "Login exitoso",
                     account = account

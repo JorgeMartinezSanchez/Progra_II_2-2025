@@ -24,6 +24,9 @@ namespace back_end.Models
         [BsonElement("salt")]
         public string Salt { get; set; } = string.Empty;
 
+        [BsonElement("encryptionIV")]
+        public string EncryptionIV { get; set; } = string.Empty;
+
         [BsonElement("createdAt")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

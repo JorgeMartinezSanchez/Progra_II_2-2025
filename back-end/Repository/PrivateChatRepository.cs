@@ -41,5 +41,9 @@ namespace back_end.Repository
         {
             await _privateChats.DeleteOneAsync(a => a.Id == id);
         }
+        public async Task UpdateAsync(string id, PrivateChat privateChat)
+        {
+            await _privateChats.ReplaceOneAsync(a => a.Id == id, privateChat);
+        }
     }
 }

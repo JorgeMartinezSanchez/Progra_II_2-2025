@@ -45,7 +45,7 @@ builder.Services.AddScoped<IPrivateChatService, PrivateChatService>();
 builder.Services.AddScoped<IChatKeyStoreRepository, ChatKeyStoreRepository>();
 builder.Services.AddScoped<IChatKeyStoreService, ChatKeyStoreService>();
 
-builder.Services.AddScoped<IDesencrypteService, DesencrypteService>();
+builder.Services.AddScoped<IEncryptationService, EncryptationService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

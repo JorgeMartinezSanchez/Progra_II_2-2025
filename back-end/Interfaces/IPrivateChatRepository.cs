@@ -10,5 +10,6 @@ namespace back_end.Interfaces
         Task<PrivateChat> GetByAccountId(string _AccountId);
         Task DeleteAsync(string id);
         Task<PrivateChat> CreateAsync(PrivateChat privateChat);
+        Task UpdateAsync(string id, PrivateChat privateChat);
     }
 }

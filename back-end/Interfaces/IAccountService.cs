@@ -8,7 +8,7 @@ namespace back_end.Interfaces
         Task<List<ReceiveAccountDto>> GetAllAccountsAsync();
         Task<ReceiveAccountDto> GetAccountByIdAsync(string id);
         Task<ReceiveAccountDto> CreateAccountAsync(CreateAccountDto createAccountDto);
-        Task<ReceiveAccountDto> LoginAsync(string username, string password);
+        Task<ReceiveAccountDto> LoginAsync(LoginDto login);
         Task DeleteAccountAsync(string id);
         ReceiveAccountDto MapToDto(Account account);
     }

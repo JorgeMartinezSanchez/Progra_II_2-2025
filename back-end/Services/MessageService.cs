@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using back_end.DTOs;
 using back_end.Exceptions;
 using back_end.Interfaces;
@@ -8,9 +9,15 @@ namespace back_end.Services
     public class MessageService : IMessageService
     {
         private readonly IMessageRepository _messageReposiroty;
-        public MessageService(IMessageRepository messageReposiroty)
+        private readonly IEncryptationService _encryptationService;
+        private readonly IChatKeyStoreService _chatKeyStoreService;
+        public MessageService(IMessageRepository messageReposiroty, 
+                              IEncryptationService encryptationService,
+                              IChatKeyStoreService chatKeyStoreService)
         {
             _messageReposiroty = messageReposiroty;
+            _encryptationService = encryptationService;
+            _chatKeyStoreService = chatKeyStoreService;
         }
 
         public ReceiveMessageDto MapToDto(Message message)
@@ -36,24 +43,52 @@ namespace back_end.Services
         }
         public async Task<ReceiveMessageDto> SendMessageAsync(CreateMessageDto messageDto)
         {
-            if (string.IsNullOrEmpty(messageDto.EncryptedContent))
+            if (string.IsNullOrEmpty(messageDto.Content))
             {
                 throw new EncryptionException("Message is Empty.");
             }
 
-            var MsgToDb = new Message
+            try
             {
-                ChatId = messageDto.ChatId,
-                SenderId = messageDto.SenderId,
-                EncryptedContent = messageDto.EncryptedContent,
-                Iv = messageDto.Iv,
-                TimeStamp = DateTime.UtcNow,
-                Status = "Sent"
-            };
+                // 1. Obtener la clave del chat para el usuario que envía el mensaje
+                var chatKeyDto = await _chatKeyStoreService.GetChatKeyAsync(messageDto.SenderId, messageDto.ChatId);
+                
+                // 2. Desencriptar la clave AES del chat usando la clave privada del remitente
+                string chatAesKey = _encryptationService.DecryptWithRsa(
+                    chatKeyDto.EncryptedChatKey, 
+                    messageDto.SenderPrivateKey
+                );
+                
+                // 3. Encriptar el contenido del mensaje con AES usando la clave del chat
+                (string encryptedContent, string iv) = _encryptationService.EncryptWithAes(
+                    messageDto.Content, 
+                    chatAesKey
+                );
+                
+                // 4. Crear el mensaje para la base de datos
+                var msgToDb = new Message
+                {
+                    ChatId = messageDto.ChatId,
+                    SenderId = messageDto.SenderId,
+                    EncryptedContent = encryptedContent,
+                    Iv = iv,
+                    TimeStamp = DateTime.UtcNow,
+                    Status = "Sent"
+                };
 
-            var sendMsg = await _messageReposiroty.CreateAsync(MsgToDb);
+                // 5. Guardar el mensaje en la base de datos
+                var sendMsg = await _messageReposiroty.CreateAsync(msgToDb);
 
-            return MapToDto(sendMsg);
+                return MapToDto(sendMsg);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new EncryptionException($"Chat key not found for user {messageDto.SenderId} in chat {messageDto.ChatId}. Please ensure the chat is properly initialized.", ex);
+            }
+            catch (CryptographicException ex)
+            {
+                throw new EncryptionException("Failed to encrypt message. Please check the encryption keys.", ex);
+            }
         }
         public async Task<List<ReceiveMessageDto>> GetMessagesByPrivateChatAsync(string privateChatId)
         {

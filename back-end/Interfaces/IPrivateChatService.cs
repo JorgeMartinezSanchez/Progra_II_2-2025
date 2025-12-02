@@ -9,7 +9,9 @@ namespace back_end.Interfaces
         Task<bool> AlreadyAddedContactAsync(string id, string SendingUsername);
         Task DeleteChatAsync(string _id);
         Task<ReceivePrivateChatDto> GetPrivateChatById(string id);
+        Task<string> GetEncryptedChatKey(string userId, string chatId);
         Task<List<ReceivePrivateChatDto>> LoadChats(string accountId);
-        Task<ReceivePrivateChatDto> MapToDto(PrivateChat privateChat, string _id);
+        Task<ReceivePrivateChatDto> MapToDto(PrivateChat privateChat, string currentUserId);
+        
     }
 }
